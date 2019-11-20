@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/battleships/static/css/main.9e6f2c4a.chunk.css",
+    "main.js": "/battleships/static/js/main.ae510cf1.chunk.js",
+    "main.js.map": "/battleships/static/js/main.ae510cf1.chunk.js.map",
+    "runtime-main.js": "/battleships/static/js/runtime-main.c903405c.js",
+    "runtime-main.js.map": "/battleships/static/js/runtime-main.c903405c.js.map",
+    "static/js/2.5fd2144b.chunk.js": "/battleships/static/js/2.5fd2144b.chunk.js",
+    "static/js/2.5fd2144b.chunk.js.map": "/battleships/static/js/2.5fd2144b.chunk.js.map",
+    "index.html": "/battleships/index.html",
+    "precache-manifest.adadeca55087c8380155f592f4ff12b4.js": "/battleships/precache-manifest.adadeca55087c8380155f592f4ff12b4.js",
+    "service-worker.js": "/battleships/service-worker.js",
+    "static/css/main.9e6f2c4a.chunk.css.map": "/battleships/static/css/main.9e6f2c4a.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c903405c.js",
+    "static/js/2.5fd2144b.chunk.js",
+    "static/css/main.9e6f2c4a.chunk.css",
+    "static/js/main.ae510cf1.chunk.js"
+  ]
+}
