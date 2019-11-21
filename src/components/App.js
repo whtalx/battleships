@@ -1,11 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import Ally from './Ally';
-import Enemy from './Enemy';
-import Ocean from './Ocean';
-import Select from './Select';
-import Placing from './Placing';
-import TextBlock from "./TextBlock";
+import Game from './Game';
 
 const App = (props) => {
   useEffect(
@@ -60,48 +55,7 @@ const App = (props) => {
     [props]
   );
 
-  switch (props.game.status) {
-    case `choose`:
-    case `connect`:
-      return <Select />;
-
-    case `place`:
-    case `confirm`:
-      return (
-        <Ocean>
-          <Ally />
-          <Placing />
-        </Ocean>
-      );
-
-    case `victory`:
-    case `wait`:
-      return (
-        <Ocean>
-          <Ally />
-          <TextBlock />
-        </Ocean>
-      );
-
-    case `play`:
-      return (
-        <Ocean>
-          <Ally />
-          <Enemy />
-        </Ocean>
-      );
-
-    case `defeat`:
-      return (
-        <Ocean>
-          <TextBlock />
-          <Enemy />
-        </Ocean>
-      );
-
-    default:
-      return null;
-  }
+  return <Game />;
 };
 
 const mapStateToProps = (state) => ({

@@ -1,6 +1,6 @@
 /**
  * input: coordinates of `a` cell
- * return: ship parameter of any `b` cell
+ * return: first not-false ship parameter of any `b` cell
  * (going clockwise, starting with left-top)
  *
  * ____________

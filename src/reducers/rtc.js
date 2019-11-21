@@ -5,12 +5,22 @@ import setPeerID from '../actions/setPeerID';
 import setIsConnected from '../actions/setIsConnected';
 import setIsInitialised from '../actions/setIsInitialised';
 
-const initialState = () => ({
+/**
+ * peerID -- ...
+ * interface -- ...
+ * isClient -- ...
+ * isConnected -- ...
+ * isInitialised -- ...
+ * waitingForFeedback -- bool to prevent firing more than once (happens with slow network)
+ */
+
+ const initialState = () => ({
   peerID: '',
   interface: null,
   isClient: false,
   isConnected: false,
   isInitialised: false,
+  waitingForFeedback: false,
 });
 
 

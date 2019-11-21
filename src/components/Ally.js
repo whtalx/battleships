@@ -4,7 +4,7 @@ import Sea from './Sea';
 import Cell from './Cell';
 
 const Ally = (props) =>
-  <Sea border move={ props.game.move }>
+  <Sea border grid move={ props.game.move }>
     {
       props.sea.ally.map(row =>
         row.map(cell =>

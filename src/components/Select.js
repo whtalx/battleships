@@ -10,35 +10,31 @@ const StyledSelect = styled.div`
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 30px;
   display: flex;
 
   label {
     text-align: center;
+    min-height: 1.2em;
+    line-height: 1.2em;
     user-select: none;
-  }
-
-  p {
-    min-height: 1em;
-    outline: 1px dotted #555;
-  }
-
-  button {
-    margin: 16px 16px;
-    width: 108px;
-    height: 64px;
   }
 `;
 
-const Output = styled.input`
+const Output = styled.input.attrs({
+  type: `text`,
+})`
+  max-width: 90%;
+  min-height: 1.5em;
   background-color: #000;
   border: none;
-  color: inherit;
+  border-radius: 0;
   outline: none;
+  color: #ddd;
   font-size: inherit;
   font-weight: 300;
+  line-height: 1.5em;
   text-align: center;
-  border-radius: 0;
 `;
 
 const Input = styled(Output)`
@@ -46,39 +42,18 @@ const Input = styled(Output)`
 `;
 
 const Button = styled.button`
+  margin: 16px 16px;
+  width: 108px;
+  height: 64px;
   font-family: 'Material Icons';
 `;
 
 const Select = (props) => {
   const input = useRef(null);
   const output = useRef(null);
+  const [changed, setChanged] = useState(false);
   const [selected, setSelected] = useState(false);
-  const [pasted, setPasted] = useState(false);
-
-  useEffect(
-    () => {
-      if (props.game.status !== `connect`) return;
-
-      if (props.rtc.interface === null) {
-        setRTC(props.rtc.peerID);
-      } else if (!props.rtc.isInitialised){
-        props.rtc.interface.init();
-        props.rtc.isClient && props.rtc.interface.join();
-      } else if (props.rtc.peerID && !selected) {
-        output.current.focus();
-        output.current.select();
-      }
-    },// eslint-disable-next-line
-    [props]
-  );
-
-  function getID() {
-    const id = input.current.value;
-    if (!id || id === '' || id === props.rtc.peerID) return;
-    setRTC(id, true, false);
-  }
-
-  function setRTC(id, isClient = false, isInitialised = false) {
+  const setRTC = (id, isClient = false, isInitialised = false) =>
     props.setRTC({
       interface: new RTC({
         peerID: id,
@@ -91,39 +66,50 @@ const Select = (props) => {
       isClient,
       isInitialised,
     });
-  }
+  const connect = (id = input.current.value) => id && id !== '' && id !== props.rtc.peerID && setRTC(id, true);
+  const handleKeyPress = (event) => { event.key === `Enter` && connect() };
+  const preventDefault = (event) => { event.preventDefault() };
+  const handleChange = () => setChanged(true);
+  const handleSelect = () => setSelected(true);
+  const handleClick = () => { connect() };
 
-  function handleChange(event) {
-    event.preventDefault();
-  }
+  useEffect(
+    () => {
+      if (props.game.status !== `connect`) return;
 
-  function handleSelect() {
-    setSelected(true);
-  }
-
-  function handleKeyPress(event) {
-    event.key === `Enter` && getID();
-  }
+      if (props.rtc.interface === null) {
+        setRTC(props.rtc.peerID);
+      } else if (!props.rtc.isInitialised){
+        props.rtc.interface.init();
+        props.rtc.isClient && props.rtc.interface.join();
+      } else if (props.rtc.peerID && !selected) {
+        output.current.select();
+      }
+    },// eslint-disable-next-line
+    [props]
+  );
 
   switch (props.game.status) {
-    case `choose`: return (
-      <StyledSelect>
-        <label>select game type:</label>
-        <div>
-          <Button onClick={ () => props.selectType(true) }>&#xE7FD;&#xE8D4;&#xE7FD;</Button>
-          {/*<Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>*/}
-        </div>
-      </StyledSelect>
+    case `choose`:
+      return (
+        <StyledSelect>
+          <label>select game type:</label>
+          <div>
+            <Button onClick={ () => props.selectType(true) }>&#xE7FD;&#xE8D4;&#xE7FD;</Button>
+            {/*<Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>*/}
+          </div>
+        </StyledSelect>
     );
 
-    case `connect`: return (
-      <StyledSelect>
-        <label>copy this text and share<br />with someone you want to play:</label>
-        <Output type="text" size="20" ref={ output } value={ props.rtc.peerID } onChange={ handleChange } onSelect={ handleSelect }/>
-        <label>or paste text<br />that was shared to you:</label>
-        <Input type="text" size="16" ref={ input } onChange={ () => setPasted(true)} onKeyPress={ handleKeyPress } />
-        { pasted && <label><TextButton onClick={ getID }>connect</TextButton></label> }
-      </StyledSelect>
+    case `connect`:
+      return (
+        <StyledSelect>
+          <label>share this text<br />with someone<br />you want to play:</label>
+          <Output ref={ output } onChange={ preventDefault } onSelect={ handleSelect } value={ props.rtc.peerID } />
+          <label>or paste text that<br />was shared to you:</label>
+          <Input ref={ input } onChange={ handleChange } onKeyPress={ handleKeyPress } />
+          <label>{ changed && <TextButton onClick={ handleClick }>connect</TextButton> }</label>
+        </StyledSelect>
     );
 
     default: return null;
@@ -136,12 +122,12 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  receive: (payload) => dispatch({ type: `RECEIVE`, payload }),
   setRTC: (payload) => dispatch({ type: `SET_RTC`, payload }),
+  receive: (payload) => dispatch({ type: `RECEIVE`, payload }),
   setPeerID: (payload) => dispatch({ type: `SET_PEER_ID`, payload }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
-  setIsInitialised: (payload) => dispatch({ type: `SET_IS_INITIALISED`, payload }),
   setIsConnected: (payload) => dispatch({ type: 'SET_IS_CONNECTED', payload }),
+  setIsInitialised: (payload) => dispatch({ type: `SET_IS_INITIALISED`, payload }),
   handleDisconnect: () => dispatch({ type: `RESET` }),
 });
 

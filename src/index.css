@@ -1,3 +1,11 @@
+:root {
+  --sank: url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTU1IiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wIDBMMzAgMzBaTTAgMzBMMzAgMFoiLz48L3N2Zz4=);
+  --hit: url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYWFhIiBzdHJva2Utd2lkdGg9IjEiPjxwYXRoIGQ9Ik0wIDBMMzAgMzBaTTAgMzBMMzAgMFoiLz48L3N2Zz4=);
+  --miss: url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzU1NSI+PGNpcmNsZSBjeD0iMTUiIGN5PSIxNSIgcj0iMSIvPjwvc3ZnPg==);
+  --hover: url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzAgMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2FhYSI+PGNpcmNsZSBjeD0iMTUiIGN5PSIxNSIgcj0iMSIvPjwvc3ZnPg==);
+  --grid: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyIDIiIGZpbGw9IiMyMjIiPjxwYXRoIGQ9Ik0wIDBoMXYyaDF2LTFoLTJaIi8+PC9zdmc+);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -37,7 +45,7 @@ button:focus {
   outline: none;
 }
 
-p {
-  margin: 0;
-  font-weight: 300;
+::selection {
+  background: rgba(255,255,255, .4);
+  color: #000;
 }

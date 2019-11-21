@@ -1,10 +1,10 @@
 import makeSea from '../scripts/makeSea';
-import makeSquadron from '../scripts/makeSquadron';
 import placeShip from '../actions/placeShip';
 import receiveFire from '../actions/receiveFire';
+import sendVictory from '../actions/sendVictory';
+import makeSquadron from '../scripts/makeSquadron';
 import clearFeedback from '../actions/clearFeedback';
 import randomPlacing from '../actions/randomPlacing';
-import receiveDefeat from '../actions/receiveDefeat';
 import receiveVictory from '../actions/receiveVictory';
 import receiveFeedback from '../actions/receiveFeedback';
 
@@ -12,8 +12,10 @@ import receiveFeedback from '../actions/receiveFeedback';
  * shipsToPlace -- number of ships to be placed (by type)
  * shipsToPlace.total -- total amount of ships to be placed (for triggering 'confirm' state)
  * currentType -- number of type of ship that will be placed next (for arrow indicator in Placing component)
- *
- * feedback: feedback message, formed for sending
+ * allyShipsLeft -- number of your not-sank ships
+ * enemyShipsLeft -- number of your opponent not-sank ships
+ * feedback -- feedback message, formed for sending
+ * feedbackReceived -- bool to prevent firing more than once (happens with slow network)
  */
 
 const initialState = () => ({
@@ -36,7 +38,7 @@ const initialState = () => ({
 export default (state = initialState(), action) => {
   switch (action.type) {
     case `SEND`:
-      return action.payload.type === `feedback`
+      return (action.payload.type === `feedback` || action.payload.type === `defeat`)
         ? clearFeedback(state)
         : state;
 
@@ -58,7 +60,7 @@ export default (state = initialState(), action) => {
           return receiveVictory(state, action);
 
         case `defeat`:
-          return receiveDefeat(state, action);
+          return sendVictory(state, action);
 
         default:
           return state;

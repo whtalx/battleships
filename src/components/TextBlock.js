@@ -40,20 +40,16 @@ const TextBlock = (props) => {
           <Result>
             { resultText[props.game.status] }
             <br/>
-            {
-              props.game.isAllyWantRepeat
-                ? <br />
-                : `play another round?`
-            }
+            { !props.game.isAllyWantRepeat && `play another round?` }
           </Result>
           <Repeat>
             {
-            props.game.isAllyWantRepeat
-              ? `waiting for yor opponent answer`
-              : [
-                <TextButton key="yes" onClick={ props.repeat }>yes</TextButton>,
-                <TextButton key="no" onClick={ props.reset }>no</TextButton>
-              ]
+              props.game.isAllyWantRepeat
+                ? `waiting for yor opponent answer`
+                : [
+                  <TextButton key="yes" onClick={ props.repeat }>yes</TextButton>,
+                  <TextButton key="no" onClick={ props.reset }>no</TextButton>
+                ]
             }
           </Repeat>
           { props.game.isEnemyWantRepeat && <Ready>your opponent said «yes»</Ready> }

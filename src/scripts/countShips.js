@@ -7,32 +7,36 @@
  */
 
 const count = (type) => type
-  .map(item =>
-    item[0] === null
-      ? 1
-      : item.length === 1
-      ? 0
-      : item.reduce((a, b) =>
-        a === 1
-          ? 1
-          : b === null
-          ? 1
-          : 0
+  .map(item =>                  // let's take a ship
+    item[0] === null            // i'ts first deck empty?
+      ? 1                       // it should be placed
+      : item.length === 1       // it's single decker?
+      ? 0                       // nothing to do here
+      : item.reduce((a, b) =>   // let's look at all it's decks
+        a === 1                 // was there empty deck earlier?
+          ? 1                   // there was, keep it to the end
+          : b === null          // is this deck empty?
+            ? 1                 // it should be placed
+            : 0                 // nothing to do here
       )
   )
-  .reduce((a, b) => a + b);
+  .reduce((a, b) => a + b);     // sum of all ships that need to be placed
 
 export default (state) => {
-  const newState = { ...state };
-  newState.shipsToPlace.fourDecker = count(state.squadron[0]);
-  newState.shipsToPlace.threeDecker = count(state.squadron[1]);
-  newState.shipsToPlace.twoDecker = count(state.squadron[2]);
-  newState.shipsToPlace.singleDecker = count(state.squadron[3]);
-  newState.shipsToPlace.total = 0;
+  const shipsToPlace = {
+    fourDecker: count(state.squadron[0]),
+    threeDecker: count(state.squadron[1]),
+    twoDecker: count(state.squadron[2]),
+    singleDecker: count(state.squadron[3]),
+  };
 
-  const numbers = Object.values(newState.shipsToPlace);
-  newState.shipsToPlace.total = numbers.reduce((a, b) => a + b);
-  newState.currentType = numbers.findIndex(a => a !== 0);
+  const numbers = Object.values(shipsToPlace);
+  shipsToPlace.total = numbers.reduce((a, b) => a + b);
+  const currentType = numbers.findIndex(a => a !== 0);
 
-  return newState;
+  return {
+    ...state,
+    shipsToPlace,
+    currentType,
+  };
 }

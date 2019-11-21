@@ -1,6 +1,6 @@
 import getShip from '../scripts/getShip';
-import placeShip from '../scripts/placeShip';
-import countShips from '../scripts/countShips';
+import makeDeck from '../scripts/makeDeck';
+import removeDeck from '../scripts/removeDeck';
 import isThereShip from '../scripts/isThereShip';
 import getCoordinates from '../scripts/getCoordinates';
 import isThereShipInCross from '../scripts/isThereShipInCross';
@@ -10,82 +10,68 @@ export default (state, action) => {
   const newState = { ...state };
   const coordinates = getCoordinates(action.payload);
 
+  /**
+   * removing decks from ship
+   */
   const thereIsShip = isThereShip(newState.ally, coordinates);
   if (thereIsShip) {
     /**
-     * if clicked on cell with ship deck, see if we can delete it
+     * removing possible only with ends of ships,
+     * decks in the middle could not be deleted
      */
     const [type, ship, deck] = getShip(thereIsShip);
-    if (deck === 0) {
-      /**
-       * deleting first deck, adding null to the end of ship
-       */
-      newState.squadron[type][ship].shift();
-      newState.squadron[type][ship].push(null);
-      newState.squadron[type][ship].forEach((item, index) => {
-        item && (newState.ally[item[1]][item[0]].ship = `${ type }-${ ship }-${ index }`);
-      });
-      newState.ally[coordinates[1]][coordinates[0]].ship = false;
-    } else if (
-      deck === newState.squadron[type][ship].length - 1 ||
-      newState.squadron[type][ship][deck + 1] === null
-    ) {
-      /**
-       * deleting last not-null deck
-       */
-      newState.squadron[type][ship][deck] = null;
-      newState.ally[coordinates[1]][coordinates[0]].ship = false;
-    }
-
-    /**
-     * if clicked not on first or last deck -- do nothing
-     */
-    return countShips(newState);
+    return (deck === 0 || !newState.squadron[type][ship][deck + 1])
+      ? removeDeck(type, ship, deck, coordinates, newState)
+      : newState;
   }
 
+  /**
+   * doing nothing if there are ships diagonally
+   */
   const thereIsShipDiagonally = isThereShipDiagonally(newState.ally, coordinates);
   if (thereIsShipDiagonally) return newState;
 
+  /**
+   * adding deck to the ship
+   */
   const thereIsShipInCross = isThereShipInCross(newState.ally, coordinates);
-  if (thereIsShipInCross) {
+  if (thereIsShipInCross.length === 1) {
     /**
-     * if clicked at the cell next to any ship cell
+     * if clicked at the cell next to only one ship
      * horizontally or vertically,
      * see if we can add deck with this cell coordinates
      * to this ship
      */
-    const [type, ship] = thereIsShipInCross.split(`-`).map(item => parseInt(item));
+    const [type, ship] = thereIsShipInCross[0].split(`-`).map(item => parseInt(item));
     for (let newDeck = 1; newDeck < newState.squadron[type][ship].length; newDeck++) {
       if (newState.squadron[type][ship][newDeck] === null) {
         const toStart = (
           coordinates[0] < newState.squadron[type][ship][0][0] ||
           coordinates[1] < newState.squadron[type][ship][0][1]
         );
-        return placeShip(type, ship, newDeck, coordinates, newState, toStart);
+        return makeDeck(type, ship, newDeck, coordinates, newState, toStart);
       }
     }
 
     return newState;
   }
 
-  for (let type = 0; type < newState.squadron.length; type++) {
-    for (let ship = 0; ship < newState.squadron[type].length; ship++) {
-      for (let deck = 0; deck < newState.squadron[type][ship].length; deck++) {
-        /**
-         * look for first null deck of all ships
-         */
-        if (newState.squadron[type][ship][deck] === null) {
-          /**
-           * if it isn`t first deck of this ship -- do nothing
-           * (clicked cell must be next to existent deck in cross to add new deck)
-           * it`s made to prevent breaking descending order of ship placement
-           */
-          return deck === 0
-            ? placeShip(type, ship, deck, coordinates, newState, false)
-            : newState;
-        }
-      }
-    }
+  /**
+   * placing new ship
+   */
+  for (let i = 0; i < newState.squadron[newState.currentType].length; i++) {
+    const ship = newState.squadron[newState.currentType][i];
+    const shipIsFull = ship.filter(i => i).length === ship.length;
+    if (shipIsFull) continue;
+      /**
+       * new deck must be first deck of ship,
+       * adding decks handled previously with `thereIsShipInCross`.
+       * it`s made to prevent breaking order of ship placement
+       * (four decker -> three decker -> two decker -> single decker)
+       */
+    return ship[0] === null
+      ? makeDeck(newState.currentType, i, 0, coordinates, newState, false)
+      : newState;
   }
 
   return newState;

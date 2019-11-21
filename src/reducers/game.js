@@ -24,7 +24,7 @@ import receiveRepeat from '../actions/receiveRepeat';
  * isAllyReady -- flag shows that you confirmed ship placement
  * isEnemyReady -- flag shows that opponent confirmed ship placement
  *
- * move -- flag shows if it's your turn to shoot
+ * move -- flag shows if it's your turn to fire
  */
 
 const initialState = (status = `connect`, move = false) => ({

@@ -8,5 +8,8 @@ export default (state, action) => {
   state.interface.send(message);
   console.log(`sent:     `, JSON.parse(JSON.stringify(message)));
 
-  return state;
+  return {
+    ...state,
+    waitingForFeedback: action.payload.type === `fire`,
+  };
 }

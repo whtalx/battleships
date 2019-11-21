@@ -6,6 +6,18 @@ import Cell from './Cell';
 import Label from './Label';
 import TextButton from './TextButton';
 
+const HintLabel = styled.label`
+  grid-row: 1 / span 2;
+  grid-column: 1 / span 10;
+  text-align: center;
+`;
+
+const Confirm = styled(Label)`
+  grid-row: 10;
+  grid-column: 1 / span 10;
+  align-items: center;
+`;
+
 const Ship = styled.div`
   grid-column: 2 / span 8;
   grid-row: ${ props => props.row };
@@ -45,9 +57,7 @@ const Number = styled(Cell)`
 `;
 
 const PlacingSea = styled(Sea)`
-  user-select: none;
-
-  :after {
+  & > div:after {
     grid-column-start: 1;
     grid-row-start: 3;
     display: ${ props => props.currentType === -1 ? `none` : `flex` };
@@ -56,8 +66,8 @@ const PlacingSea = styled(Sea)`
     transform: translateY(${ props => props.currentType * 200 }%);
     transition: transform .5s;
     font-family: 'Material Icons';
-    font-size: 30px;
-    line-height: 30px;
+    font-size: 29px;
+    line-height: 29px;
     content: '\u{E315}';
   }
 `;
@@ -69,22 +79,9 @@ const PlacingShip = ({ decks, row, number }) =>
         <Deck key={ `placing-deck-${ decks }-${ item }` } column={ item + 1 } place />
       )
     }
-    <Times times place />
-    <Number place>{ number }</Number>
+    <Times times />
+    <Number>{ number }</Number>
   </Ship>;
-
-const HintLabel = styled.label`
-  grid-row: 1 / span 2;
-  grid-column: 1 / span 10;
-  text-align: center;
-`;
-
-const Confirm = styled(Label)`
-  grid-row: 10;
-  grid-column: 1 / span 10;
-  align-items: center;
-`;
-
 
 const Placing = (props) =>
   <PlacingSea currentType={ props.sea.currentType }>

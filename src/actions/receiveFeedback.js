@@ -4,6 +4,7 @@ export default (state, action) => {
   const newState = { ...state };
   const ship = [...action.payload.data];
   const feedback = action.payload.feedback;
+
   switch (feedback) {
     case `miss`: {
       newState.enemy[ship[0][1]][ship[0][0]].miss = true;
@@ -29,6 +30,7 @@ export default (state, action) => {
         newState.feedback = { type: `victory`, data: [...newState.ally] };
         return newState;
       }
+
       break;
     }
 

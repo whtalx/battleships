@@ -2,8 +2,8 @@ import countShips from '../scripts/countShips';
 
 export default (state) => {
   const newState = { ...state };
-  const getDirection = () => Math.round(Math.random());// 0 == horizontal, 1 == vertical
-  const shifts = [//constrains of head coordinates for all ship types
+  const getDirection = () => Math.round(Math.random());     // 0 == horizontal, 1 == vertical
+  const shifts = [                                          //constrains of head coordinates for all ship types
     [
       [-3, 0],
       [0, -3],
@@ -27,7 +27,7 @@ export default (state) => {
      * create random coordinates in constrained range;
      * check if there is ships diagonally or in cross
      * to first deck with this coordinates and all other decks;
-     * if there is -- create new coordinates reqursively.
+     * if there is -- create new coordinates recursively.
      * first deck of ship is leftmost or topmost
      * for horizontal or vertical direction respectively
      * TODO: handle case with too much recursion
@@ -96,18 +96,10 @@ export default (state) => {
           );
 
           brandNewState.squadron[type][ship].forEach((item, index) => {
-            item && (brandNewState.ally[item[1]][item[0]].ship = `${type}-${ship}-${index}`);
+            item && (brandNewState.ally[item[1]][item[0]].ship = `${ type }-${ ship }-${ index }`);
           });
         })
       });
-
-      brandNewState.shipsToPlace = {
-        fourDecker: 0,
-        threeDecker: 0,
-        twoDecker: 0,
-        singleDecker: 0,
-        total: 0,
-      };
 
       return countShips(brandNewState);
     } catch (e) {

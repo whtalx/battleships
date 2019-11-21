@@ -1,6 +1,6 @@
 /**
  * input: coordinates of `a` cell
- * return: ship parameter of any `b` cell
+ * return: array of not-false ship parameters of all `b` cells
  * (going clockwise, starting with top)
  *
  * ____________
@@ -10,22 +10,23 @@
  *
  */
 
-export default (sea, coordinates) => (
+export default (sea, coordinates) => [
   (
     sea[coordinates[1] - 1] &&
     sea[coordinates[1] - 1][coordinates[0]] &&
     sea[coordinates[1] - 1][coordinates[0]].ship
-  ) || (
+  ),
+  (
     sea[coordinates[1] + 1] &&
     sea[coordinates[1] + 1][coordinates[0]] &&
     sea[coordinates[1] + 1][coordinates[0]].ship
-  ) || (
-    sea[coordinates[0] - 1] &&
+  ),
+  (
     sea[coordinates[1]][coordinates[0] - 1] &&
     sea[coordinates[1]][coordinates[0] - 1].ship
-  ) || (
-    sea[coordinates[0] + 1] &&
+  ),
+  (
     sea[coordinates[1]][coordinates[0] + 1] &&
     sea[coordinates[1]][coordinates[0] + 1].ship
-  )
-);
+  ),
+].filter(i => i);

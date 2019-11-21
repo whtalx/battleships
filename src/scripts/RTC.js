@@ -78,6 +78,6 @@ export default function RTC(props) {
   };
 
   this.send = (data) => {
-    (this.connection && this.connection.open) && this.connection.send(data);
+    this.connection && this.connection.open && this.connection.send(data);
   };
 }

@@ -4,11 +4,11 @@ import Sea from './Sea';
 import Cell from './Cell';
 
 const Enemy = (props) =>
-  <Sea border move={ !props.game.move }>
+  <Sea border grid move={ !props.game.move }>
     {
       props.sea.enemy.map(row =>
         row.map(cell =>
-          <Cell key={ cell.id } data={ cell } onClick={ props.fire } move={ props.game.status === `play` && props.game.move } enemy/>
+          <Cell key={ cell.id } data={ cell } onClick={ props.fire } move={ props.game.status === `play` && props.game.move && !props.rtc.waitingForFeedback } enemy />
         )
       )
     }
@@ -16,6 +16,7 @@ const Enemy = (props) =>
 
 const mapStateToProps = (state) => ({
   game: state.game,
+  rtc: state.rtc,
   sea: state.sea,
 });
 
