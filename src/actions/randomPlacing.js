@@ -2,8 +2,8 @@ import countShips from '../scripts/countShips';
 
 export default (state) => {
   const newState = { ...state };
-  const getDirection = () => Math.round(Math.random());     // 0 == horizontal, 1 == vertical
-  const shifts = [                                          //constrains of head coordinates for all ship types
+  const getDirection = () => Math.round(Math.random()); // 0 == horizontal, 1 == vertical
+  const shifts = [                                      // constraints of coordinates of first deck for all ship types
     [
       [-3, 0],
       [0, -3],
@@ -30,8 +30,14 @@ export default (state) => {
      * if there is -- create new coordinates recursively.
      * first deck of ship is leftmost or topmost
      * for horizontal or vertical direction respectively
-     * TODO: handle case with too much recursion
      */
+    /**
+     * TODO: handle case with too much recursion
+     * > currently 'too much recursion' error leaves state
+     * > with all ships placed except those that weren't placed when error appears
+     * > you may place them manually, however in 'comp' mode AI can't
+     */
+
     let coordinates = [
       Math.floor(Math.random() * (10 + shifts[type][direction][0])),
       Math.floor(Math.random() * (10 + shifts[type][direction][1])),
@@ -87,7 +93,7 @@ export default (state) => {
         brandNewState.squadron[type].forEach((_, ship) => {
           const direction = getDirection();
           const coordinates = getRandomCoordinates(type, direction);
-          if (!coordinates) throw new Error(`javascript too weak for much recursion`);
+          if (!coordinates) throw new Error(`browser too weak for such recursion 😔`);
 
           brandNewState.squadron[type][ship] = brandNewState.squadron[type][ship].map((_, index) =>
             direction === 0
@@ -100,12 +106,10 @@ export default (state) => {
           });
         })
       });
-
-      return countShips(brandNewState);
     } catch (e) {
       console.error(e);
-      return state;
     }
+    return countShips(newState);
   };
 
   return place(newState);

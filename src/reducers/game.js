@@ -13,21 +13,24 @@ import receiveRepeat from '../actions/receiveRepeat';
  * place   -- it's waiting for all ships to be placed (switched automatically)
  * confirm -- it's waiting for confirm of ship placement
  * wait    -- it's waiting for opponent to confirm ship placement
- * play    -- ...
- * victory -- ...
- * defeat  -- ...
+ * play    -- it's waiting till there were no ships in any of seas
+ * victory -- it's waiting for confirmation of new round
+ * defeat  -- same as victory
  *
  * game types:
- * pvp    -- you versus someone on network
- * comp   -- you versus computer
+ * pvp  -- you versus someone on network
+ * comp -- you versus computer
  *
- * isAllyReady -- flag shows that you confirmed ship placement
- * isEnemyReady -- flag shows that opponent confirmed ship placement
+ * isAllyReady  -- flag shows that you confirmed ship placement
+ * isEnemyReady -- flag shows that your opponent confirmed ship placement
  *
- * move -- flag shows if it's your turn to fire
+ * isAllyWantRepeat  -- flag shows that you agreed on another round
+ * isEnemyWantRepeat -- flag shows that your opponent agreed on another round
+ *
+ * move -- flag shows if it's your turn to fire (in comp type you always start first)
  */
 
-const initialState = (status = `connect`, move = false) => ({
+const initialState = (status = `choose`, move = false) => ({
   type: null,
   isAllyReady: false,
   isEnemyReady: false,
@@ -96,7 +99,7 @@ export default (state = initialState(), action) => {
       return initialState();
 
     case `NEW_ROUND`:
-      return initialState(`place`, !state.move);
+      return initialState(`place`, state.type === 'pvp' ? !state.move : true);
 
     default:
       return state;

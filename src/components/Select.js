@@ -96,7 +96,7 @@ const Select = (props) => {
           <label>select game type:</label>
           <div>
             <Button onClick={ () => props.selectType(true) }>&#xE7FD;&#xE8D4;&#xE7FD;</Button>
-            {/*<Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>*/}
+            <Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>
           </div>
         </StyledSelect>
     );

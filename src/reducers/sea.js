@@ -9,13 +9,15 @@ import receiveVictory from '../actions/receiveVictory';
 import receiveFeedback from '../actions/receiveFeedback';
 
 /**
- * shipsToPlace -- number of ships to be placed (by type)
- * shipsToPlace.total -- total amount of ships to be placed (for triggering 'confirm' state)
- * currentType -- number of type of ship that will be placed next (for arrow indicator in Placing component)
- * allyShipsLeft -- number of your not-sank ships
- * enemyShipsLeft -- number of your opponent not-sank ships
- * feedback -- feedback message, formed for sending
- * feedbackReceived -- bool to prevent firing more than once (happens with slow network)
+ * ally               -- your sea
+ * enemy              -- your opponent sea
+ * squadron           -- see ../scripts/makeSquadron
+ * shipsToPlace       -- number of ships to be placed (by type)
+ * shipsToPlace.total -- total number of ships to be placed (for triggering 'confirm' state)
+ * currentType        -- type (index) of ship that will be placed next (for arrow indicator in Placing component)
+ * allyShipsLeft      -- number of your ships on water (not-sank)
+ * enemyShipsLeft     -- number of your opponent ships on water (not-sank)
+ * feedback           -- feedback message, formed for sending
  */
 
 const initialState = () => ({
@@ -38,7 +40,11 @@ const initialState = () => ({
 export default (state = initialState(), action) => {
   switch (action.type) {
     case `SEND`:
-      return (action.payload.type === `feedback` || action.payload.type === `defeat`)
+      return (
+        action.payload.type === `feedback` ||
+        action.payload.type === `defeat` ||
+        action.payload.type === `victory`
+      )
         ? clearFeedback(state)
         : state;
 
@@ -46,7 +52,7 @@ export default (state = initialState(), action) => {
       return placeShip(state, action);
 
     case `RANDOM`:
-      return randomPlacing({ ...state, ally: makeSea(`ally`) });
+      return randomPlacing({ ...state, ally: makeSea(`ally`), squadron: makeSquadron(), });
 
     case `RECEIVE`: {
       switch (action.payload.type) {

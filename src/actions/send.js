@@ -5,11 +5,11 @@ export default (state, action) => {
     ? { type: `fire`, data: getCoordinates(action.payload.data) }
     : { ...action.payload };
 
-  state.interface.send(message);
   console.log(`sent:     `, JSON.parse(JSON.stringify(message)));
 
   return {
     ...state,
+    message,
     waitingForFeedback: action.payload.type === `fire`,
   };
 }

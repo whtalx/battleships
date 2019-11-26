@@ -44,15 +44,15 @@ const TextBlock = (props) => {
           </Result>
           <Repeat>
             {
-              props.game.isAllyWantRepeat
-                ? `waiting for yor opponent answer`
-                : [
-                  <TextButton key="yes" onClick={ props.repeat }>yes</TextButton>,
-                  <TextButton key="no" onClick={ props.reset }>no</TextButton>
-                ]
+            props.game.isAllyWantRepeat
+              ? `waiting for yor opponent answer`
+              : [
+                <TextButton key="yes" onClick={ props.repeat }>yes</TextButton>,
+                <TextButton key="no" onClick={ props.reset }>no</TextButton>
+              ]
             }
           </Repeat>
-          { props.game.isEnemyWantRepeat && <Ready>your opponent said «yes»</Ready> }
+          { props.game.type === `pvp` && props.game.isEnemyWantRepeat && <Ready>your opponent said «yes»</Ready> }
         </Sea>
       );
 
