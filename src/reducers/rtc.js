@@ -25,7 +25,6 @@ import setIsInitialised from '../actions/setIsInitialised';
   waitingForFeedback: false,
 });
 
-
 export default (state = initialState(), action) => {
   switch (action.type) {
     case `SET_RTC`:
