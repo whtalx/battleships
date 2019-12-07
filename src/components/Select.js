@@ -10,7 +10,7 @@ const StyledSelect = styled.div`
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 32px;
   display: flex;
 
   label {
@@ -45,7 +45,8 @@ const Button = styled.button`
   margin: 16px 16px;
   width: 108px;
   height: 64px;
-  font-family: 'Material Icons';
+  font-family: inherit;
+  font-size: 16px;
 `;
 
 const Select = (props) => {
@@ -95,8 +96,8 @@ const Select = (props) => {
         <StyledSelect>
           <label>select game type:</label>
           <div>
-            <Button onClick={ () => props.selectType(true) }>&#xE7FD;&#xE8D4;&#xE7FD;</Button>
-            <Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>
+            <Button onClick={ () => props.selectType(true) }>VS. PERSON</Button>
+            <Button onClick={ () => props.selectType(false) }>VS. COMPUTER</Button>
           </div>
         </StyledSelect>
     );

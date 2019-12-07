@@ -23,6 +23,8 @@ import setIsInitialised from '../actions/setIsInitialised';
   isConnected: false,
   isInitialised: false,
   waitingForFeedback: false,
+  lastSent: null,
+  lastReceived: null,
 });
 
 export default (state = initialState(), action) => {

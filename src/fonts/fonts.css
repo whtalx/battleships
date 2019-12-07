@@ -1,0 +1,9 @@
+@font-face {
+  font-family: vga;
+  src:
+  url('./DOSVGA.woff2') format('woff2'),
+  url('./DOSVGA.woff') format('woff'),
+  url('./DOSVGA.svg') format('svg'),
+  url('./DOSVGA.ttf') format('truetype'),
+  url('./DOSVGA.eot') format('embedded-opentype');
+}

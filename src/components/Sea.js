@@ -2,15 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  margin: 10px;
-  width: calc(50vmin - 26px);
-  height: calc(50vmin - 26px);
-  min-width: 300px;
-  min-height: 300px;
+  margin: 8px;
+  width: calc(50vmin - 20px);
+  height: calc(50vmin - 20px);
+  min-width: 292px;
+  min-height: 292px;
   box-sizing: border-box;
-  border: 3px double ${ props => props.border ? props.move ? `#555` : `#aaa` : `#000` };
+  border: 2px solid ${ props => props.move ? `#ff0` : `#aa0` };
+  background-color: ${ props => props.move ? `#fff` : `#aaa` };
   overflow: hidden;
-  user-select: none;
 `;
 
 const Content = styled.div`
@@ -22,9 +22,7 @@ const Content = styled.div`
   grid-template: repeat(10, 1fr) / repeat(10, 1fr);
 `;
 
-export default (props) =>
-  <Wrapper { ...props }>
-    <Content grid={ props.grid }>
-      { props.children }
-    </Content>
+export default ({ move, children }) =>
+  <Wrapper move={ move }>
+    <Content move={ move } children={ children } />
   </Wrapper>

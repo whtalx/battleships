@@ -4,11 +4,20 @@ import Sea from './Sea';
 import Cell from './Cell';
 
 const Ally = (props) =>
-  <Sea border grid move={ props.game.move }>
+  <Sea move={ !props.game.move }>
     {
       props.sea.ally.map(row =>
-        row.map(cell =>
-          <Cell key={ cell.id } data={ cell } onClick={ (props.game.status === `place` || props.game.status === `confirm`) && props.place } />
+        row.map(({ id, ship, hit, miss, sank }) =>
+          <Cell
+            key={ id }
+            id={ id }
+            last={ id === props.rtc.lastReceived }
+            ship={ ship }
+            hit={ hit }
+            miss={ miss }
+            sank={ sank }
+            onClick={ () => { ((props.game.status === `place` || props.game.status === `confirm`) && (props.sea.shipsToPlace.total > 0 || ship)) && props.place(id) }}
+          />
         )
       )
     }
@@ -16,6 +25,7 @@ const Ally = (props) =>
 
 const mapStateToProps = (state) => ({
   game: state.game,
+  rtc: state.rtc,
   sea: state.sea,
 });
 
