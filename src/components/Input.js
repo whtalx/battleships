@@ -1,34 +1,101 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 
-const Wrapper = styled.div`
-  width: 196px;
-  position: relative;
+const blink = keyframes`
+  0% { opacity: 1 }
+  50% { opacity: 1 }
+  51% { opacity: 0 }
+  to { opacity: 0 }
 `;
 
 const Input = styled.input.attrs({
   type: `text`,
+  size: 17,
+  maxLength: 16,
 })`
-  width: ${ props => props.size * 9 }px;
-  height: 14px;
+  margin: 0;
+  padding: 0 0 0 4px;
+  height: 16px;
   min-width: 0;
+  position: relative;
+  z-index: 1;
+  background: none;
+  caret-color: transparent;
+`;
+
+const Caret = styled.div`
+  position: absolute;
+  top: 0;
+  right: ${ props => 147 - props.caret * 9 }px;
+  animation: ${ blink } 1s linear infinite;
+`;
+
+const Placeholder = styled.div`
+  position: absolute;
+  top: 0;
+  right: 3px;
   z-index: 1;
 `;
 
-const Placeholder = styled.span`
-  position: absolute;
-  top: 0;
-  left: 8px;
+const Background = styled.div`
+  position: relative;
   background-color: var(--black);
   color: var(--white);
-  font-size: inherit;
-  line-height: 1;
+  overflow: hidden;
+
+  ${ Input }:not(:focus) + ${ Caret } {
+    display: none;
+  }
 `;
 
-export default ({ onChange, onSelect, value = `` }) =>
-  <Wrapper>
-    [
-      <Placeholder>{ `.`.repeat(20) }</Placeholder>
-      <Input onSelect={ onSelect } onChange={ onChange } value={ value } size={ value.length } />
-    ]
-  </Wrapper>
+const Wrapper = styled.div`
+  margin: 16px auto;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+`;
+
+export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
+  const input = useRef(null);
+  const [caret, setCaret] = useState(symbols);
+  const moveCaret = (event) => {
+    if (event.type === `keydown` && event.key === `Enter`) {
+      submit();
+    } else {
+      setCaret(event.target.selectionEnd);
+    }
+  };
+
+  !readonly && useEffect(
+    () => {
+      input.current.focus();
+    },// eslint-disable-next-line
+    []
+  );
+
+  const inputProps = readonly
+    ? {
+      onChange: (event) => event.preventDefault(),
+      value,
+    }
+    : {
+      onClick: moveCaret,
+      onKeyUp: moveCaret,
+      onPaste: moveCaret,
+      onChange: moveCaret,
+      onKeyDown: moveCaret,
+      onInput,
+    };
+
+  return (
+    <Wrapper>
+      [
+      <Background>
+        <Placeholder>{ `·`.repeat(17 - symbols) }</Placeholder>
+        <Input ref={ input } { ...inputProps } />
+        { !readonly && <Caret caret={ caret }>_</Caret> }
+      </Background>
+      ]
+    </Wrapper>
+  );
+}
