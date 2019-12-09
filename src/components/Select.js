@@ -31,11 +31,13 @@ const Wrapper = styled.div`
 
 const Content = styled.div`
   padding: 32px 12px;
-  min-height: 224px;
+  height: 100%;
+  box-sizing: border-box;
+  min-height: 294px;
+  display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  display: flex;
   border: 3px double var(--black);
 `;
 
@@ -88,7 +90,7 @@ const Select = (props) => {
   switch (props.game.status) {
     case `choose`:
       return (
-        <Wrapper title={ `SELECT GAME TYPE` } onKeyPress={ handleKeyPress }>
+        <Wrapper title={ `select game type` } onKeyPress={ handleKeyPress }>
           <Content>
             <p>you want to play with</p>
             <Buttons>
@@ -102,12 +104,12 @@ const Select = (props) => {
     case `connect`:
       return props.rtc.peerID === ``
         ? (
-          <Wrapper title={ `CONNECT TO REMOTE PLAYER` }>
+          <Wrapper title={ `connect to remote player` }>
             <Content>please wait</Content>
           </Wrapper>
         )
         : (
-          <Wrapper title={ `CONNECT TO REMOTE PLAYER` } onKeyPress={ handleKeyPress }>
+          <Wrapper title={ `connect to remote player` } onKeyPress={ handleKeyPress }>
             <Content>
               <label>share this code<br />with someone<br />you want to play:</label>
               <Input symbols={ props.rtc.peerID.length } value={ props.rtc.peerID } readonly />

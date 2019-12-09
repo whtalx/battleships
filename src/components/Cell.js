@@ -6,7 +6,7 @@ const Cell = styled.div`
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background-color: #00a;
+  background-color: var(--navy);
   color: ${
     props => props.last
       ? css`var(--aqua)`

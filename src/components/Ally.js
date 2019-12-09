@@ -4,7 +4,7 @@ import Sea from './Sea';
 import Cell from './Cell';
 
 const Ally = (props) =>
-  <Sea move={ !props.game.move }>
+  <Sea move={ props.game.status === `place` || !props.game.move }>
     {
       props.sea.ally.map(row =>
         row.map(({ id, ship, hit, miss, sank }) =>
