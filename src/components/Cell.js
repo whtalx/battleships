@@ -7,7 +7,13 @@ const Cell = styled.div`
   justify-content: center;
   box-sizing: border-box;
   background-color: #00a;
-  color: ${ props => props.last ? css`#0ff` : (props.miss || props.sank || props.hit) ? css`#aaa` : css`#fff` };
+  color: ${
+    props => props.last
+      ? css`var(--aqua)`
+      : (props.miss || props.sank || props.hit)
+        ? css`var(--gray)`
+        : css`var(--white)`
+  };
 `;
 
 export default (props) =>

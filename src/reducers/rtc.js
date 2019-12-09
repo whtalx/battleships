@@ -16,7 +16,7 @@ import setIsInitialised from '../actions/setIsInitialised';
  */
 
  const initialState = () => ({
-  peerID: '',
+  peerID: ``,
   message: null,
   interface: null,
   isClient: false,

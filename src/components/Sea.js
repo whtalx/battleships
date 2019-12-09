@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div`
   margin: 8px;
@@ -8,8 +8,8 @@ const Wrapper = styled.div`
   min-width: 292px;
   min-height: 292px;
   box-sizing: border-box;
-  border: 2px solid ${ props => props.move ? `#ff0` : `#aa0` };
-  background-color: ${ props => props.move ? `#fff` : `#aaa` };
+  border: 2px solid ${ props => props.move ? css`var(--yellow)` : css`var(--olive)` };
+  background-color: ${ props => props.move ? css`var(--silver)` : css`var(--gray)` };
   overflow: hidden;
 `;
 

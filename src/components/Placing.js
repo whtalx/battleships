@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Sea from './Sea';
@@ -66,7 +65,6 @@ const PlacingSea = styled(Sea)`
     justify-content: center;
     transform: translateY(${ props => props.currentType * 200 }%);
     transition: transform .5s;
-    font-family: 'Material Icons';
     font-size: 29px;
     line-height: 29px;
     content: '\u{E315}';
@@ -84,28 +82,18 @@ const PlacingShip = ({ decks, row, number }) =>
     <Number>{ number }</Number>
   </Ship>;
 
-const Placing = (props) => {
-  // useEffect(
-  //   () => { //run random placing until error
-  //     props.sea.shipsToPlace.total === 0 && props.random();
-  //   },
-  //   [props]
-  // );
-
-  return (
-    <PlacingSea currentType={props.sea.currentType}>
-      <HintLabel>
-        click on field to place ship manually<br/>or place them <TextButton onClick={ props.random }>randomly</TextButton>
-      </HintLabel>
-      <PlacingShip decks={4} row={3} number={props.sea.shipsToPlace.fourDecker}/>
-      <PlacingShip decks={3} row={5} number={props.sea.shipsToPlace.threeDecker}/>
-      <PlacingShip decks={2} row={7} number={props.sea.shipsToPlace.twoDecker}/>
-      <PlacingShip decks={1} row={9} number={props.sea.shipsToPlace.singleDecker}/>
-      {props.game.status === `confirm` &&
-      <Confirm><TextButton onClick={props.ready}>confirm and proceed</TextButton></Confirm>}
-    </PlacingSea>
-  );
-};
+const Placing = (props) =>
+  <PlacingSea currentType={props.sea.currentType}>
+    <HintLabel>
+      click on field to place ship manually<br/>or place them <TextButton onClick={ props.random }>randomly</TextButton>
+    </HintLabel>
+    <PlacingShip decks={4} row={3} number={props.sea.shipsToPlace.fourDecker}/>
+    <PlacingShip decks={3} row={5} number={props.sea.shipsToPlace.threeDecker}/>
+    <PlacingShip decks={2} row={7} number={props.sea.shipsToPlace.twoDecker}/>
+    <PlacingShip decks={1} row={9} number={props.sea.shipsToPlace.singleDecker}/>
+    {props.game.status === `confirm` &&
+    <Confirm><TextButton onClick={props.ready}>confirm and proceed</TextButton></Confirm>}
+  </PlacingSea>
 
 const mapStateToProps = (state) => ({
   game: state.game,
