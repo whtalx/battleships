@@ -6,6 +6,7 @@ import Input from './Input';
 import Button from './Button';
 
 const Wrapper = styled.div`
+  margin: 16px 0;
   padding: 8px 4px;
   width: 320px;
   max-width: 80%;
@@ -15,7 +16,7 @@ const Wrapper = styled.div`
   color: var(--black);
 
   :before {
-    content: '${ props => props.title }';
+    content: '${ props => props.title_ }';
     padding: 0 8px;
     position: absolute;
     top: 2px;
@@ -30,7 +31,7 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 32px 12px;
+  padding: 32px 0;
   height: 100%;
   box-sizing: border-box;
   min-height: 294px;
@@ -65,8 +66,8 @@ const Select = (props) => {
   const handleKeyPress = (event) => {
     if (props.game.status !== `choose`) return;
 
-    (event.key === `p` || event.key === `P`) && props.selectType(true);
-    (event.key === `c` || event.key === `C`) && props.selectType(false);
+    event.key.toLowerCase() === `p` && props.selectType(true);
+    event.key.toLowerCase() === `c` && props.selectType(false);
   };
   const back = () => {
     changePeerID(``);
@@ -90,7 +91,7 @@ const Select = (props) => {
   switch (props.game.status) {
     case `choose`:
       return (
-        <Wrapper title={ `select game type` } onKeyPress={ handleKeyPress }>
+        <Wrapper title_={ `select game type` } onKeyPress={ handleKeyPress }>
           <Content>
             <p>you want to play with</p>
             <Buttons>
@@ -104,12 +105,12 @@ const Select = (props) => {
     case `connect`:
       return props.rtc.peerID === ``
         ? (
-          <Wrapper title={ `connect to remote player` }>
+          <Wrapper title_={ `connect to remote player` }>
             <Content>please wait</Content>
           </Wrapper>
         )
         : (
-          <Wrapper title={ `connect to remote player` } onKeyPress={ handleKeyPress }>
+          <Wrapper title_={ `connect to remote player` } onKeyPress={ handleKeyPress }>
             <Content>
               <label>share this code<br />with someone<br />you want to play:</label>
               <Input symbols={ props.rtc.peerID.length } value={ props.rtc.peerID } readonly />

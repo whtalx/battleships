@@ -19,7 +19,7 @@ const shifts = [ // constraints of coordinates of first deck for all ship types
   ],
 ];
 
-const getRandomCoordinates = (state, type, call = 1) => {
+const getRandomCoordinates = (state, type) => {
   const newState = { ...state };
   /**
    * create random coordinates in constrained range;
@@ -71,20 +71,20 @@ const getRandomCoordinates = (state, type, call = 1) => {
           )
         )
       ) {
-        return getRandomCoordinates(newState, type, call + 1);
+        return getRandomCoordinates(newState, type);
       }
     }
   } catch ({ message }) {
-    console.error(message, `calls: ${ call }`);
+    console.error(message);
     return {};
   }
-  // console.log(`type: ${ ['four decker', 'three decker', 'two decker', 'single decker'][type] } calls: ${ call }`);
+
   return { coordinates, direction };
 };
 
 export default (state) => {
   const newState = { ...state };
-  // console.clear();
+
   try {
       newState.squadron.forEach((_, type) => {
         newState.squadron[type].forEach((_, ship) => {
@@ -98,7 +98,7 @@ export default (state) => {
           );
 
           newState.squadron[type][ship].forEach((item, deck) => {
-            newState.ally[item[1]][item[0]].ship = `${type}-${ship}-${deck}`;
+            newState.ally[item[1]][item[0]].ship = `${ type }-${ ship }-${ deck }`;
           });
         })
       });

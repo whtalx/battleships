@@ -23,7 +23,11 @@ const Button = styled.button`
 `;
 
 export default ({ autoFocus, className, onClick, text = ``, index }) =>
-  <Button autoFocus={ autoFocus } className={ className } onClick={ onClick }>
+  <Button
+    autoFocus={ autoFocus }
+    className={ className }
+    onClick={ typeof onClick === `function` ? onClick : undefined }
+  >
     {
       index === undefined
         ? text

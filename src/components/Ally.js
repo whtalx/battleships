@@ -2,9 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Sea from './Sea';
 import Cell from './Cell';
+import isShipPlaced from '../scripts/isShipPlaced';
 
 const Ally = (props) =>
-  <Sea move={ props.game.status === `place` || !props.game.move }>
+  <Sea move={ props.game.status === `place` || props.game.status === `confirm` || !props.game.move }>
     {
       props.sea.ally.map(row =>
         row.map(({ id, ship, hit, miss, sank }) =>
@@ -16,7 +17,8 @@ const Ally = (props) =>
             hit={ hit }
             miss={ miss }
             sank={ sank }
-            onClick={ () => { ((props.game.status === `place` || props.game.status === `confirm`) && (props.sea.shipsToPlace.total > 0 || ship)) && props.place(id) }}
+            isCompleted={ isShipPlaced({ cell: ship, squadron: props.sea.squadron }) }
+            onClick={ () => { ((props.game.status === `place` || props.game.status === `confirm`) && (props.sea.shipsToPlace > 0 || ship)) && props.place(id) }}
           />
         )
       )
