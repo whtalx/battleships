@@ -11,5 +11,6 @@ export default (state, action) => {
     ...state,
     message,
     waitingForFeedback: action.payload.type === `fire`,
+    lastSent: action.payload.type === `fire` ? action.payload.data : state.lastSent,
   };
 }
