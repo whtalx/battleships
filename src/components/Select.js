@@ -48,6 +48,7 @@ const Buttons = styled.div`
 
 const Select = (props) => {
   const [peerID, changePeerID] = useState(``);
+
   const setRTC = (id, isClient = false, isInitialised = false) =>
     props.setRTC({
       interface: new RTC({
@@ -61,14 +62,15 @@ const Select = (props) => {
       isClient,
       isInitialised,
     });
-  const connect = (id = peerID) => id && id !== `` && id !== props.rtc.peerID && setRTC(id, true);
-  const handleInput = (event) => changePeerID(event.target.value);
-  const handleKeyPress = (event) => {
-    if (props.game.status !== `choose`) return;
 
-    event.key.toLowerCase() === `p` && props.selectType(true);
-    event.key.toLowerCase() === `c` && props.selectType(false);
-  };
+  const connect = (id = peerID) =>
+    id &&
+    id !== `` &&
+    id !== props.rtc.peerID &&
+    setRTC(id, true);
+
+  const handleInput = ({ target: { value }}) => changePeerID(value);
+
   const back = () => {
     changePeerID(``);
     props.handleDisconnect();
@@ -91,7 +93,7 @@ const Select = (props) => {
   switch (props.game.status) {
     case `choose`:
       return (
-        <Wrapper title_={ `select game type` } onKeyPress={ handleKeyPress }>
+        <Wrapper title_={ `select game type` }>
           <Content>
             <p>you want to play with</p>
             <Buttons>
@@ -110,7 +112,7 @@ const Select = (props) => {
           </Wrapper>
         )
         : (
-          <Wrapper title_={ `connect to remote player` } onKeyPress={ handleKeyPress }>
+          <Wrapper title_={ `connect to remote player` }>
             <Content>
               <label>share this code<br />with someone<br />you want to play:</label>
               <Input symbols={ props.rtc.peerID.length } value={ props.rtc.peerID } readonly />

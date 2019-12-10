@@ -111,13 +111,8 @@ const Placing = (props) => {
       isPlaced={ isPlaced({ type, ship, deck }) }
     />;
 
-  const handleKeyPress = (event) => {
-    event.key.toLowerCase() === `r` && props.random();
-    props.game.status === `confirm` && event.key.toLowerCase() === `c` && props.ready();
-  };
-
   return (
-    <Wrapper title_={ `place your ships` } onKeyPress={ handleKeyPress }>
+    <Wrapper title_={ `place your ships` }>
       <Content>
         click on field to place<br />or delete ship deck<hr />ships left:
         <ShipsLeft>

@@ -331,6 +331,7 @@ module.exports = function(webpackEnv) {
       ],
     },
     module: {
+      exprContextCritical: false,
       strictExportPresence: true,
       rules: [
         // Disable require.ensure as it's not a standard language feature.

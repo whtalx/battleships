@@ -67,11 +67,6 @@ const Modal = (props) => {
     defeat: `you loose!`,
   };
 
-  const handleKeyPress = (event) => {
-    event.key.toLowerCase() === `y` && props.repeat();
-    event.key.toLowerCase() === `n` && props.reset();
-  };
-
   switch (props.game.status) {
     case `defeat`:
     case `victory`:
@@ -89,7 +84,7 @@ const Modal = (props) => {
         )
         : (
           <Window>
-            <Wrapper title_={ resultText[props.game.status] } onKeyPress={ handleKeyPress }>
+            <Wrapper title_={ resultText[props.game.status] }>
               <Content>
                 <Text>
                   { !props.game.isAllyWantRepeat && `play another round?` }<br />

@@ -4,13 +4,52 @@ import AI from '../scripts/AI';
 import Game from './Game';
 
 const App = (props) => {
+  const handleKeyPress = (event) => {
+    const key = event.key.toLowerCase();
+
+    switch (props.game.status) {
+      case `choose`: {
+        key === `p` && props.selectType(true);
+        key === `c` && props.selectType(false);
+        break;
+      }
+
+      case `place`: {
+        key === `r` && props.random();
+        break;
+      }
+
+      case `confirm`: {
+        key === `r` && props.random();
+        key === `c` && props.ready();
+        break;
+      }
+
+      case `defeat`:
+      case `victory`: {
+        key === `y` && props.repeat();
+        key === `n` && props.reset();
+        break;
+      }
+
+      default: break;
+    }
+  };
+
   useEffect(
     () => {
+      document.removeEventListener(`keypress`, handleKeyPress);
+
       switch (props.game.status) {
+        case `choose`: {
+          document.addEventListener(`keypress`, handleKeyPress);
+          break;
+        }
+
         case `connect`: {
           if (props.rtc.isConnected) {
-            props.changeStatus(`place`);
             props.setMove(props.rtc.isClient);
+            props.changeStatus(`place`);
           }
           break;
         }
@@ -28,7 +67,9 @@ const App = (props) => {
               props.rtc.interface.init();
             }
           }
+
           props.sea.shipsToPlace === 0 && props.changeStatus(`confirm`);
+          document.addEventListener(`keypress`, handleKeyPress);
           break;
         }
 
@@ -38,11 +79,12 @@ const App = (props) => {
             break;
           }
 
-          props.game.isAllyReady && (
-            props.game.isEnemyReady
-              ? props.changeStatus(`play`)
-              : props.changeStatus(`wait`)
-          );
+          if (props.game.isAllyReady) {
+            props.changeStatus(props.game.isEnemyReady ? `play` : `wait`);
+            break;
+          }
+
+          document.addEventListener(`keypress`, handleKeyPress);
           break;
         }
 
@@ -57,7 +99,12 @@ const App = (props) => {
 
         case `defeat`:
         case `victory`: {
-          props.game.isAllyWantRepeat && props.game.isEnemyWantRepeat && props.newRound();
+          if (props.game.isAllyWantRepeat) {
+            props.game.isEnemyWantRepeat && props.newRound();
+            break;
+          }
+
+          document.addEventListener(`keypress`, handleKeyPress);
           break;
         }
 
@@ -70,7 +117,9 @@ const App = (props) => {
       } else if (props.sea.feedback) {
         props.send(props.sea.feedback);
       }
-    },
+
+      return () => document.removeEventListener(`keypress`, handleKeyPress);
+    },// eslint-disable-next-line
     [props]
   );
 
@@ -86,12 +135,17 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   changeStatus: (status) => dispatch({ type: `CHANGE_STATUS`, payload: status }),
   setIsConnected: (payload) => dispatch({ type: 'SET_IS_CONNECTED', payload }),
+  selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
   setMove: (payload) => dispatch({ type: `SET_MOVE`, payload }),
   receive: (payload) => dispatch({ type: `RECEIVE`, payload }),
   setRTC: (payload) => dispatch({ type: `SET_RTC`, payload }),
-  send: (payload) => dispatch({ type: `SEND`, payload }),
   clearMessage: () => dispatch({ type: `CLEAR_MESSAGE` }),
+  send: (payload) => dispatch({ type: `SEND`, payload }),
   newRound: () => dispatch({ type: `NEW_ROUND` }),
+  random: () => dispatch({ type: `RANDOM` }),
+  repeat: () => dispatch({ type: `REPEAT` }),
+  ready: () => dispatch({ type: `READY` }),
+  reset: () => dispatch({ type: `RESET` }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
