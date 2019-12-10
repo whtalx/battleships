@@ -1,5 +1,4 @@
 :root {
-  /* standard 16 colors supported with the Windows VGA palette */
   --white: white;
   --silver: silver;
   --gray: gray;
@@ -12,7 +11,7 @@
   --green: green;
   --aqua: aqua;
   --teal: teal;
-  --blue: #00a;
+  --blue: #00c;
   --navy: navy;
   --fuchsia: fuchsia;
   --purple: purple;
@@ -40,7 +39,7 @@ body {
 }
 
 body:before {
-  content: 'BATTLESHIPS';
+  content: 'battleships';
   padding: 0 8px;
   position: absolute;
   top: 2px;

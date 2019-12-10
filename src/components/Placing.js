@@ -56,7 +56,6 @@ const ShipsLeft = styled.div`
   display: grid;
   grid-gap: 1px;
   grid-template: repeat(7, auto) / repeat(8, auto);
-  //background-color: var(--silver);
 `;
 
 const StyledDeck = styled.div`
@@ -64,10 +63,10 @@ const StyledDeck = styled.div`
   height: calc(5vmin - 2px);
   min-width: 29px;
   min-height: 29px;
-  background-color: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--blue);
 
   ${
     props => !props.isPlaced && css`
@@ -101,6 +100,7 @@ const Buttons = styled.div`
 const Placing = (props) => {
   const isPlaced = ({ type, ship, deck }) =>
     props.sea.squadron[type][ship][deck] !== null;
+
   const Deck = ({ type, ship, deck }) =>
     <StyledDeck
       isNext={
@@ -110,6 +110,7 @@ const Placing = (props) => {
       }
       isPlaced={ isPlaced({ type, ship, deck }) }
     />;
+
   const handleKeyPress = (event) => {
     event.key.toLowerCase() === `r` && props.random();
     props.game.status === `confirm` && event.key.toLowerCase() === `c` && props.ready();
@@ -118,87 +119,27 @@ const Placing = (props) => {
   return (
     <Wrapper title_={ `place your ships` } onKeyPress={ handleKeyPress }>
       <Content>
-        click on fild to place<br />or delete ship deck<hr />ships left:
+        click on field to place<br />or delete ship deck<hr />ships left:
         <ShipsLeft>
-          {/*{*/}
-          {/*  [...Array(7).keys()].reduce((array, ys) =>*/}
-          {/*      [*/}
-          {/*        ...array,*/}
-          {/*        [...Array(8).keys()].map((xs) =>*/}
-          {/*          <div>*/}
-          {/*            {*/}
-          {/*              ys % 2 !== 0*/}
-          {/*                ? `\u{00A0}`*/}
-          {/*                : // TODO: implement algorithm for creating layout of ShipsLeft */}
-          {/*            }*/}
-          {/*          </div>*/}
-          {/*        )*/}
-          {/*      ],*/}
-          {/*    []*/}
-          {/*  )*/}
-          {/*}*/}
-          <Deck type={ 0 } ship={ 0 } deck={ 3 } />
-          <Deck type={ 0 } ship={ 0 } deck={ 2 } />
-          <Deck type={ 0 } ship={ 0 } deck={ 1 } />
-          <Deck type={ 0 } ship={ 0 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-
-          <Deck type={ 1 } ship={ 1 } deck={ 2 } />
-          <Deck type={ 1 } ship={ 1 } deck={ 1 } />
-          <Deck type={ 1 } ship={ 1 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 1 } ship={ 0 } deck={ 2 } />
-          <Deck type={ 1 } ship={ 0 } deck={ 1 } />
-          <Deck type={ 1 } ship={ 0 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-
-          <Deck type={ 2 } ship={ 2 } deck={ 1 } />
-          <Deck type={ 2 } ship={ 2 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 2 } ship={ 1 } deck={ 1 } />
-          <Deck type={ 2 } ship={ 1 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 2 } ship={ 0 } deck={ 1 } />
-          <Deck type={ 2 } ship={ 0 } deck={ 0 } />
-
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-          <Space>{ `\u{00A0}` }</Space>
-
-          <Deck type={ 3 } ship={ 3 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 3 } ship={ 2 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 3 } ship={ 1 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
-          <Deck type={ 3 } ship={ 0 } deck={ 0 } />
-          <Space>{ `\u{00A0}` }</Space>
+          {
+            [...Array(7)].reduce(
+              (heap, _, y) => y % 2 !== 0
+                ? [...heap, ...[...Array(8).keys()].map((x) => <Space key={ `${ x }-${ y }` } />)]
+                : [...heap, ...props.sea.squadron[y / 2].reduce(
+                    (row, ship, index) => {
+                      const i = index > 0
+                        ? props.sea.squadron[y / 2][index - 1].length * index + index
+                        : index;
+                      for (let deck = 0; deck < ship.length; deck++) {
+                        row[deck + i] = <Deck key={ `${ y / 2 }-${ index }-${ deck }` } type={ y / 2 } ship={ props.sea.squadron[y / 2].length - index - 1 } deck={ ship.length - deck - 1 } />;
+                      }
+                      return row
+                    },
+                  [...Array(8)].map((_, x) => <Space key={ `${ x }-${ y }` } />)
+                )],
+              [],
+            )
+          }
         </ShipsLeft>
         <hr />
         <Buttons>
