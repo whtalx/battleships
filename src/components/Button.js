@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Button = styled.button`
   padding: 0 16px;
   height: 16px;
+  min-width: 60px;
   background-color: var(--white);
   box-shadow: 8px 8px 0 var(--black);
   color: var(--gray);

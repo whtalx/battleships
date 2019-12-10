@@ -18,11 +18,11 @@ const Cell = styled.div`
         background-color: ${
           props.last
             ? css`var(--aqua)`
-            : !props.isCompleted || props.hit
-              ? css`var(--silver)`
-              : props.sank
+            : props.sank
                 ? css`var(--gray)`
-                : css`var(--white)`
+                : !props.isCompleted || props.hit
+                  ? css`var(--silver)`
+                  : css`var(--white)`
         };
       }
     `
