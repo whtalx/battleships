@@ -1,153 +1,109 @@
-import React from 'react';
+// eslint-disable-next-line
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import styled, { css } from 'styled-components';
-import Button from './Button';
+import styled from 'styled-components';
+import Sea from './Sea';
+import Cell from './Cell';
+import Label from './Label';
+import TextButton from './TextButton';
 
-const Wrapper = styled.div`
-  padding: 8px 4px;
-  margin: 0 16px 16px 0;
-  width: calc(50vmin - 36px);
-  height: calc(50vmin - 36px);
-  min-width: 276px;
-  min-height: 276px;
-  box-sizing: border-box;
-  position: relative;
-  background-color: var(--gray);
-  box-shadow: 16px 16px 0 var(--black);
-  color: var(--white);
-
-  :before {
-    content: '${ props => props.title_ }';
-    padding: 0 8px;
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    width: max-content;
-    height: 16px;
-    background-color: inherit;
-    color: inherit;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
+const HintLabel = styled.label`
+  grid-row: 1 / span 2;
+  grid-column: 1 / span 10;
+  text-align: center;
 `;
 
-const Content = styled.div`
-  padding: 16px 0 0;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: column;
+const Confirm = styled(Label)`
+  grid-row: 10;
+  grid-column: 1 / span 10;
   align-items: center;
-  justify-content: flex-start;
-  border: 3px double var(--white);
-
-  hr {
-    margin: 8px 0;
-    border: 0;
-    outline: 0;
-    width: 100%;
-    height: 1px;
-    background-color: var(--white);
-  }
 `;
 
-const ShipsLeft = styled.div`
-  margin-top: 8px;
+const Ship = styled.div`
+  grid-column: 2 / span 8;
+  grid-row: ${ props => props.row };
   display: grid;
-  grid-gap: 1px;
-  grid-template: repeat(7, auto) / repeat(8, auto);
+  grid-template: auto / repeat(8, 1fr);
 `;
 
-const StyledDeck = styled.div`
-  width: calc(5vmin - 2px);
-  height: calc(5vmin - 2px);
-  min-width: 29px;
-  min-height: 29px;
+const Deck = styled(Cell)`
+  grid-row-start: ${ props => props.row };
+  grid-column-start: ${ props => props.column };
+`;
+
+const Times = styled(Cell)`
+  grid-row-start: ${ props => props.row };
+  grid-column-start: 7;
+  border: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 70% 70%;
+`;
+
+const Number = styled(Cell)`
+  grid-row-start: ${ props => props.row };
+  grid-column-start: 8;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--blue);
+  border: 0;
+  font-size: 30px;
+  font-weight: 200;
+  line-height: 30px;
 
-  ${
-    props => !props.isPlaced && css`
-      :after {
-        content: '';
-        width: 60%;
-        height: 50%;
-        background-color: ${
-          props.isNext
-            ? css`var(--aqua)`
-            : css`var(--white)`
-        };
-      }
-    `
+  @media screen and (min-width: 600px) and (min-height: 600px) {
+    font-size: 5vmin;
+    line-height: 4vmin;
   }
 `;
 
-const Space = styled.div`
-  width: 0;
-  height: 0;
+const PlacingSea = styled(Sea)`
+  & > div:after {
+    grid-column-start: 1;
+    grid-row-start: 3;
+    display: ${ props => props.currentType === -1 ? `none` : `flex` };
+    align-items: center;
+    justify-content: center;
+    transform: translateY(${ props => props.currentType * 200 }%);
+    transition: transform .5s;
+    font-family: 'Material Icons';
+    font-size: 29px;
+    line-height: 29px;
+    content: '\u{E315}';
+  }
 `;
 
-const Buttons = styled.div`
-  margin-top: -8px;
-  flex-grow: 1;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-`;
+const PlacingShip = ({ decks, row, number }) =>
+  <Ship row={ row }>
+    {
+      [...Array(decks).keys()].map(item =>
+        <Deck key={ `placing-deck-${ decks }-${ item }` } column={ item + 1 } place />
+      )
+    }
+    <Times times />
+    <Number>{ number }</Number>
+  </Ship>;
 
 const Placing = (props) => {
-  const isPlaced = ({ type, ship, deck }) =>
-    props.sea.squadron[type][ship][deck] !== null;
-
-  const Deck = ({ type, ship, deck }) =>
-    <StyledDeck
-      isNext={
-        props.sea.deckToPlace.type === type &&
-        props.sea.deckToPlace.ship === ship &&
-        props.sea.deckToPlace.deck === deck
-      }
-      isPlaced={ isPlaced({ type, ship, deck }) }
-    />;
-
-  const handleKeyPress = (event) => {
-    event.key.toLowerCase() === `r` && props.random();
-    props.game.status === `confirm` && event.key.toLowerCase() === `c` && props.ready();
-  };
+  // useEffect(
+  //   () => { //run random placing until error
+  //     props.sea.shipsToPlace.total === 0 && props.random();
+  //   },
+  //   [props]
+  // );
 
   return (
-    <Wrapper title_={ `place your ships` } onKeyPress={ handleKeyPress }>
-      <Content>
-        click on field to place<br />or delete ship deck<hr />ships left:
-        <ShipsLeft>
-          {
-            [...Array(7)].reduce(
-              (heap, _, y) => y % 2 !== 0
-                ? [...heap, ...[...Array(8).keys()].map((x) => <Space key={ `${ x }-${ y }` } />)]
-                : [...heap, ...props.sea.squadron[y / 2].reduce(
-                    (row, ship, index) => {
-                      const i = index > 0
-                        ? props.sea.squadron[y / 2][index - 1].length * index + index
-                        : index;
-                      for (let deck = 0; deck < ship.length; deck++) {
-                        row[deck + i] = <Deck key={ `${ y / 2 }-${ index }-${ deck }` } type={ y / 2 } ship={ props.sea.squadron[y / 2].length - index - 1 } deck={ ship.length - deck - 1 } />;
-                      }
-                      return row
-                    },
-                  [...Array(8)].map((_, x) => <Space key={ `${ x }-${ y }` } />)
-                )],
-              [],
-            )
-          }
-        </ShipsLeft>
-        <hr />
-        <Buttons>
-          <Button text={ `random` } index={ 0 } onClick={ props.random } autoFocus />
-          <Button text={ `confirm` } index={ 0 } onClick={ props.game.status === `confirm` && props.ready } />
-        </Buttons>
-      </Content>
-    </Wrapper>
+    <PlacingSea currentType={props.sea.currentType}>
+      <HintLabel>
+        click on field to place ship manually<br/>or place them <TextButton onClick={ props.random }>randomly</TextButton>
+      </HintLabel>
+      <PlacingShip decks={4} row={3} number={props.sea.shipsToPlace.fourDecker}/>
+      <PlacingShip decks={3} row={5} number={props.sea.shipsToPlace.threeDecker}/>
+      <PlacingShip decks={2} row={7} number={props.sea.shipsToPlace.twoDecker}/>
+      <PlacingShip decks={1} row={9} number={props.sea.shipsToPlace.singleDecker}/>
+      {props.game.status === `confirm` &&
+      <Confirm><TextButton onClick={props.ready}>confirm and proceed</TextButton></Confirm>}
+    </PlacingSea>
   );
 };
 

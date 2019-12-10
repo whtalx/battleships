@@ -23,24 +23,20 @@ const count = (type) => type
   .reduce((a, b) => a + b);     // sum of all ships that need to be placed
 
 export default (state) => {
-  const shipsToPlace = state.squadron.reduce((sum, type) => sum + count(type), 0);
-  let deckToPlace = { ...state.deckToPlace };
+  const shipsToPlace = {
+    fourDecker: count(state.squadron[0]),
+    threeDecker: count(state.squadron[1]),
+    twoDecker: count(state.squadron[2]),
+    singleDecker: count(state.squadron[3]),
+  };
 
-  findNext:
-    for (let type = 0; type < state.squadron.length; type++) {
-      for (let ship = 0; ship < state.squadron[type].length; ship++) {
-        for (let deck = 0; deck < state.squadron[type][ship].length; deck++) {
-          if (state.squadron[type][ship][deck] === null) {
-            deckToPlace = { type, ship, deck };
-            break findNext;
-          }
-        }
-      }
-    }
+  const numbers = Object.values(shipsToPlace);
+  shipsToPlace.total = numbers.reduce((a, b) => a + b);
+  const currentType = numbers.findIndex(a => a !== 0);
 
   return {
     ...state,
     shipsToPlace,
-    deckToPlace,
+    currentType,
   };
 }

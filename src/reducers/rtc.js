@@ -16,15 +16,13 @@ import setIsInitialised from '../actions/setIsInitialised';
  */
 
  const initialState = () => ({
-  peerID: ``,
+  peerID: '',
   message: null,
   interface: null,
   isClient: false,
   isConnected: false,
   isInitialised: false,
   waitingForFeedback: false,
-  lastSent: null,
-  lastReceived: null,
 });
 
 export default (state = initialState(), action) => {

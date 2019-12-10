@@ -9,27 +9,29 @@ import receiveVictory from '../actions/receiveVictory';
 import receiveFeedback from '../actions/receiveFeedback';
 
 /**
- * ally            -- your sea
- * enemy           -- your opponent sea
- * squadron        -- see ../scripts/makeSquadron
- * shipsToPlace    -- number of ships to be placed (for triggering 'confirm' state)
- * deckToPlace     -- next deck to be placed ({ type, ship, deck } are indexes of state.squadron[type][ship][deck])
- * currentType     -- type (index) of ship that will be placed next (for arrow indicator in Placing component)
- * allyShipsLeft   -- number of your ships on water (not-sank)
- * enemyShipsLeft  -- number of your opponent ships on water (not-sank)
- * feedback        -- feedback message, formed for sending
+ * ally               -- your sea
+ * enemy              -- your opponent sea
+ * squadron           -- see ../scripts/makeSquadron
+ * shipsToPlace       -- number of ships to be placed (by type)
+ * shipsToPlace.total -- total number of ships to be placed (for triggering 'confirm' state)
+ * currentType        -- type (index) of ship that will be placed next (for arrow indicator in Placing component)
+ * allyShipsLeft      -- number of your ships on water (not-sank)
+ * enemyShipsLeft     -- number of your opponent ships on water (not-sank)
+ * feedback           -- feedback message, formed for sending
  */
 
 const initialState = () => ({
   ally: makeSea(`ally`),
   enemy: makeSea(`enemy`),
   squadron: makeSquadron(),
-  shipsToPlace: 10,
-  deckToPlace: {
-    type: 0,
-    ship: 0,
-    deck: 0
+  shipsToPlace: {
+    fourDecker: 1,
+    threeDecker: 2,
+    twoDecker: 3,
+    singleDecker: 4,
+    total: 10,
   },
+  currentType: 0,
   allyShipsLeft: 10,
   enemyShipsLeft: 10,
   feedback: null,

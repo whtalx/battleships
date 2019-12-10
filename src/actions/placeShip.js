@@ -59,8 +59,8 @@ export default (state, action) => {
   /**
    * placing new ship
    */
-  for (let i = 0; i < newState.squadron[newState.deckToPlace.type].length; i++) {
-    const ship = newState.squadron[newState.deckToPlace.type][i];
+  for (let i = 0; i < newState.squadron[newState.currentType].length; i++) {
+    const ship = newState.squadron[newState.currentType][i];
     const shipIsFull = ship.filter(i => i).length === ship.length;
     if (shipIsFull) continue;
       /**
@@ -70,7 +70,7 @@ export default (state, action) => {
        * (four decker -> three decker -> two decker -> single decker)
        */
     return ship[0] === null
-      ? makeDeck(newState.deckToPlace.type, i, 0, coordinates, newState, false)
+      ? makeDeck(newState.currentType, i, 0, coordinates, newState, false)
       : newState;
   }
 

@@ -4,21 +4,11 @@ import Sea from './Sea';
 import Cell from './Cell';
 
 const Enemy = (props) =>
-  <Sea move={ props.game.move }>
+  <Sea border grid move={ !props.game.move }>
     {
       props.sea.enemy.map(row =>
-        row.map(({ id, ship, hit, miss, sank }) =>
-          <Cell
-            key={ id }
-            id={ id }
-            last={ id === props.rtc.lastSent }
-            ship={ ship }
-            hit={ hit }
-            miss={ miss }
-            sank={ sank }
-            onClick={ () => { props.game.status === `play` && props.game.move && !props.rtc.waitingForFeedback && !hit && !miss && props.fire(id) }}
-            enemy
-          />
+        row.map(cell =>
+          <Cell key={ cell.id } data={ cell } onClick={ props.fire } move={ props.game.status === `play` && props.game.move && !props.rtc.waitingForFeedback } enemy />
         )
       )
     }

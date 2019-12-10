@@ -5,7 +5,7 @@ import Enemy from './Enemy';
 import Ocean from './Ocean';
 import Select from './Select';
 import Placing from './Placing';
-import Modal from './Modal';
+import TextBlock from './TextBlock';
 
 const Game = (props) => {
   switch (props.status) {
@@ -27,7 +27,7 @@ const Game = (props) => {
       return (
         <Ocean>
           <Ally />
-          <Modal />
+          <TextBlock />
         </Ocean>
       );
 
@@ -42,7 +42,7 @@ const Game = (props) => {
     case `defeat`:
       return (
         <Ocean>
-          <Modal />
+          <TextBlock />
           <Enemy />
         </Ocean>
       );

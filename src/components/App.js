@@ -28,12 +28,12 @@ const App = (props) => {
               props.rtc.interface.init();
             }
           }
-          props.sea.shipsToPlace === 0 && props.changeStatus(`confirm`);
+          props.sea.shipsToPlace.total === 0 && props.changeStatus(`confirm`);
           break;
         }
 
         case `confirm`: {
-          if (props.sea.shipsToPlace !== 0) {
+          if (props.sea.shipsToPlace.total !== 0) {
             props.changeStatus(`place`);
             break;
           }

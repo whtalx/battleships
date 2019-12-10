@@ -1,53 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import RTC from '../scripts/RTC';
-import Input from './Input';
-import Button from './Button';
+import TextButton from './TextButton';
 
-const Wrapper = styled.div`
-  margin: 16px 0;
-  padding: 8px 4px;
-  width: 320px;
-  max-width: 80%;
-  position: relative;
-  background-color: var(--teal);
-  box-shadow: 16px 16px 0 var(--black);
-  color: var(--black);
-
-  :before {
-    content: '${ props => props.title_ }';
-    padding: 0 8px;
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    width: max-content;
-    height: 16px;
-    background-color: inherit;
-    color: inherit;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
-`;
-
-const Content = styled.div`
-  padding: 32px 0;
+const StyledSelect = styled.div`
+  width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  min-height: 294px;
-  display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  border: 3px double var(--black);
+  font-size: 30px;
+  display: flex;
+
+  label {
+    text-align: center;
+    min-height: 1.2em;
+    line-height: 1.2em;
+    user-select: none;
+  }
 `;
 
-const Buttons = styled.div`
-  margin-top: 32px;
+const Output = styled.input.attrs({
+  type: `text`,
+})`
+  max-width: 90%;
+  min-height: 1.5em;
+  background-color: #000;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  color: #ddd;
+  font-size: inherit;
+  font-weight: 300;
+  line-height: 1.5em;
+  text-align: center;
+`;
+
+const Input = styled(Output)`
+  border-bottom: 1px solid #aaa;
+`;
+
+const Button = styled.button`
+  margin: 16px 16px;
+  width: 108px;
+  height: 64px;
+  font-family: 'Material Icons';
 `;
 
 const Select = (props) => {
-  const [peerID, changePeerID] = useState(``);
+  const input = useRef(null);
+  const output = useRef(null);
+  const [changed, setChanged] = useState(false);
+  const [selected, setSelected] = useState(false);
   const setRTC = (id, isClient = false, isInitialised = false) =>
     props.setRTC({
       interface: new RTC({
@@ -61,18 +66,12 @@ const Select = (props) => {
       isClient,
       isInitialised,
     });
-  const connect = (id = peerID) => id && id !== `` && id !== props.rtc.peerID && setRTC(id, true);
-  const handleInput = (event) => changePeerID(event.target.value);
-  const handleKeyPress = (event) => {
-    if (props.game.status !== `choose`) return;
-
-    event.key.toLowerCase() === `p` && props.selectType(true);
-    event.key.toLowerCase() === `c` && props.selectType(false);
-  };
-  const back = () => {
-    changePeerID(``);
-    props.handleDisconnect();
-  };
+  const connect = (id = input.current.value) => id && id !== '' && id !== props.rtc.peerID && setRTC(id, true);
+  const handleKeyPress = (event) => { event.key === `Enter` && connect() };
+  const preventDefault = (event) => { event.preventDefault() };
+  const handleChange = () => setChanged(true);
+  const handleSelect = () => setSelected(true);
+  const handleClick = () => { connect() };
 
   useEffect(
     () => {
@@ -83,6 +82,8 @@ const Select = (props) => {
       } else if (!props.rtc.isInitialised){
         props.rtc.interface.init();
         props.rtc.isClient && props.rtc.interface.join();
+      } else if (props.rtc.peerID && !selected) {
+        output.current.select();
       }
     },// eslint-disable-next-line
     [props]
@@ -91,38 +92,25 @@ const Select = (props) => {
   switch (props.game.status) {
     case `choose`:
       return (
-        <Wrapper title_={ `select game type` } onKeyPress={ handleKeyPress }>
-          <Content>
-            <p>you want to play with</p>
-            <Buttons>
-              <Button autoFocus onClick={ () => { props.selectType(true) }} text={ `person` } index={ 0 } />
-              <Button onClick={ () => { props.selectType(false) }} text={ `computer` } index={ 0 } />
-            </Buttons>
-          </Content>
-        </Wrapper>
+        <StyledSelect>
+          <label>select game type:</label>
+          <div>
+            <Button onClick={ () => props.selectType(true) }>&#xE7FD;&#xE8D4;&#xE7FD;</Button>
+            <Button onClick={ () => props.selectType(false) }>&#xE7FD;&#xE8D4;&#xE30A;</Button>
+          </div>
+        </StyledSelect>
     );
 
     case `connect`:
-      return props.rtc.peerID === ``
-        ? (
-          <Wrapper title_={ `connect to remote player` }>
-            <Content>please wait</Content>
-          </Wrapper>
-        )
-        : (
-          <Wrapper title_={ `connect to remote player` } onKeyPress={ handleKeyPress }>
-            <Content>
-              <label>share this code<br />with someone<br />you want to play:</label>
-              <Input symbols={ props.rtc.peerID.length } value={ props.rtc.peerID } readonly />
-              <label>or paste code that<br />was shared to you:</label>
-              <Input onInput={ handleInput } submit={ connect } symbols={ peerID.length } />
-              <Buttons>
-                <Button onClick={ () => { connect() }} text={ `connect` } />
-                <Button onClick={ back } text={ `back` } />
-              </Buttons>
-            </Content>
-          </Wrapper>
-        );
+      return (
+        <StyledSelect>
+          <label>share this text<br />with someone<br />you want to play:</label>
+          <Output ref={ output } onChange={ preventDefault } onSelect={ handleSelect } value={ props.rtc.peerID } />
+          <label>or paste text that<br />was shared to you:</label>
+          <Input ref={ input } onChange={ handleChange } onKeyPress={ handleKeyPress } />
+          <label>{ changed && <TextButton onClick={ handleClick }>connect</TextButton> }</label>
+        </StyledSelect>
+    );
 
     default: return null;
   }
