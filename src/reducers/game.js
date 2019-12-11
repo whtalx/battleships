@@ -7,19 +7,18 @@ import receiveReady from '../actions/receiveReady';
 import receiveRepeat from '../actions/receiveRepeat';
 
 /**
- * game statuses:
- * choose  -- it's waiting for game type to be chosen
- * connect -- it's waiting for opponent to connect
- * place   -- it's waiting for all ships to be placed (switched automatically)
- * confirm -- it's waiting for confirm of ship placement
- * wait    -- it's waiting for opponent to confirm ship placement
- * play    -- it's waiting till there were no ships in any of seas
- * victory -- it's waiting for confirmation of new round
- * defeat  -- same as victory
+ * status:
+ *   choose           -- waiting for game type to be chosen
+ *   connect          -- waiting for opponent to connect
+ *   place            -- waiting for all ships to be placed (switched automatically)
+ *   confirm          -- waiting for confirm of ship placement
+ *   wait             -- waiting for opponent to confirm ship placement
+ *   play             -- waiting till all ship sank in any of seas
+ *   victory, defeat  -- waiting for confirmation of new round
  *
- * game types:
- * pvp  -- you versus someone on network
- * comp -- you versus computer
+ * type:
+ *   pvp  -- you versus someone on network
+ *   comp -- you versus computer
  *
  * isAllyReady  -- flag shows that you confirmed ship placement
  * isEnemyReady -- flag shows that your opponent confirmed ship placement
@@ -27,7 +26,10 @@ import receiveRepeat from '../actions/receiveRepeat';
  * isAllyWantRepeat  -- flag shows that you agreed on another round
  * isEnemyWantRepeat -- flag shows that your opponent agreed on another round
  *
- * move -- flag shows if it's your turn to fire (in comp type you always start first)
+ * move -- flag shows if it's your turn to fire
+ * in comp mode your it's turn at every round start
+ * in pvp mode it's changing alternately with every new round
+ * and in first round client peer fires first
  */
 
 const initialState = (status = `choose`, move = false) => ({

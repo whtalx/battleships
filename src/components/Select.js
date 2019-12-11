@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import RTC from '../scripts/RTC';
+import Person from '../classes/Person';
 import Input from './Input';
 import Button from './Button';
 
@@ -47,32 +47,21 @@ const Buttons = styled.div`
 `;
 
 const Select = (props) => {
-  const [peerID, changePeerID] = useState(``);
+  const [peerId, setPeerId] = useState(``);
 
-  const setRTC = (id, isClient = false, isInitialised = false) =>
-    props.setRTC({
-      interface: new RTC({
-        peerID: id,
-        setPeerID: props.setPeerID,
-        setIsConnected: props.setIsConnected,
-        setIsInitialised: props.setIsInitialised,
-        receive: props.receive,
-        handleDisconnect: props.handleDisconnect,
-      }),
-      isClient,
-      isInitialised,
-    });
+  const join = () => {
+    peerId &&
+    peerId !== `` &&
+    peerId !== props.peer.id &&
+    props.peer.interface.join(peerId);
+  };
 
-  const connect = (id = peerID) =>
-    id &&
-    id !== `` &&
-    id !== props.rtc.peerID &&
-    setRTC(id, true);
-
-  const handleInput = ({ target: { value }}) => changePeerID(value);
+  const handleInput = ({ target: { value }}) => {
+    setPeerId(value);
+  };
 
   const back = () => {
-    changePeerID(``);
+    setPeerId(``);
     props.handleDisconnect();
   };
 
@@ -80,13 +69,17 @@ const Select = (props) => {
     () => {
       if (props.game.status !== `connect`) return;
 
-      if (props.rtc.interface === null) {
-        setRTC(props.rtc.peerID);
-      } else if (!props.rtc.isInitialised){
-        props.rtc.interface.init();
-        props.rtc.isClient && props.rtc.interface.join();
-      }
-    },// eslint-disable-next-line
+      props.peer.interface === null && props.setInterface(
+        new Person({
+          disconnect: props.disconnect,
+          initialised: props.initialised,
+          client: props.client,
+          setId: props.setId,
+          open: props.open,
+          data: props.data,
+        })
+      );
+    },
     [props]
   );
 
@@ -102,10 +95,10 @@ const Select = (props) => {
             </Buttons>
           </Content>
         </Wrapper>
-    );
+      );
 
     case `connect`:
-      return props.rtc.peerID === ``
+      return props.peer.id === ``
         ? (
           <Wrapper title_={ `connect to remote player` }>
             <Content>please wait</Content>
@@ -115,11 +108,11 @@ const Select = (props) => {
           <Wrapper title_={ `connect to remote player` }>
             <Content>
               <label>share this code<br />with someone<br />you want to play:</label>
-              <Input symbols={ props.rtc.peerID.length } value={ props.rtc.peerID } readonly />
+              <Input symbols={ props.peer.id.length } value={ props.peer.id } readonly />
               <label>or paste code that<br />was shared to you:</label>
-              <Input onInput={ handleInput } submit={ connect } symbols={ peerID.length } />
+              <Input onInput={ handleInput } submit={ join } symbols={ peerId.length } />
               <Buttons>
-                <Button onClick={ () => { connect() }} text={ `connect` } />
+                <Button onClick={ join } text={ `connect` } />
                 <Button onClick={ back } text={ `back` } />
               </Buttons>
             </Content>
@@ -132,17 +125,18 @@ const Select = (props) => {
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  rtc: state.rtc,
+  peer: state.peer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setRTC: (payload) => dispatch({ type: `SET_RTC`, payload }),
-  receive: (payload) => dispatch({ type: `RECEIVE`, payload }),
-  setPeerID: (payload) => dispatch({ type: `SET_PEER_ID`, payload }),
+  disconnect: () => dispatch({ type: `RESET` }),
+  client: () => dispatch({ type: `SET_IS_CLIENT` }),
+  setId: (payload) => dispatch({ type: `SET_ID`, payload }),
+  data: (payload) => dispatch({ type: `RECEIVE`, payload }),
+  open: () => dispatch({ type: 'SET_IS_CONNECTED' }),
+  initialised: () => dispatch({ type: `SET_IS_INITIALISED` }),
+  setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
-  setIsConnected: (payload) => dispatch({ type: 'SET_IS_CONNECTED', payload }),
-  setIsInitialised: (payload) => dispatch({ type: `SET_IS_INITIALISED`, payload }),
-  handleDisconnect: () => dispatch({ type: `RESET` }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Select);

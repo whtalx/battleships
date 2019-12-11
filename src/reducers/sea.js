@@ -1,8 +1,8 @@
-import makeSea from '../scripts/makeSea';
+import makeSea from '../functions/makeSea';
 import placeShip from '../actions/placeShip';
 import receiveFire from '../actions/receiveFire';
 import sendVictory from '../actions/sendVictory';
-import makeSquadron from '../scripts/makeSquadron';
+import makeSquadron from '../functions/makeSquadron';
 import clearFeedback from '../actions/clearFeedback';
 import randomPlacing from '../actions/randomPlacing';
 import receiveVictory from '../actions/receiveVictory';
@@ -14,13 +14,12 @@ import receiveFeedback from '../actions/receiveFeedback';
  * squadron        -- see ../scripts/makeSquadron
  * shipsToPlace    -- number of ships to be placed (for triggering 'confirm' state)
  * deckToPlace     -- next deck to be placed ({ type, ship, deck } are indexes of state.squadron[type][ship][deck])
- * currentType     -- type (index) of ship that will be placed next (for arrow indicator in Placing component)
  * allyShipsLeft   -- number of your ships on water (not-sank)
  * enemyShipsLeft  -- number of your opponent ships on water (not-sank)
- * feedback        -- feedback message, formed for sending
+ * feedback        -- feedback message formed for sending
  */
 
-const initialState = () => ({
+export const initialState = () => ({
   ally: makeSea(`ally`),
   enemy: makeSea(`enemy`),
   squadron: makeSquadron(),
@@ -50,7 +49,11 @@ export default (state = initialState(), action) => {
       return placeShip(state, action);
 
     case `RANDOM`:
-      return randomPlacing({ ...state, ally: makeSea(`ally`), squadron: makeSquadron(), });
+      return randomPlacing({
+        ...state,
+        ally: makeSea(`ally`),
+        squadron: makeSquadron(),
+      });
 
     case `RECEIVE`: {
       switch (action.payload.type) {

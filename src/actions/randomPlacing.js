@@ -1,4 +1,4 @@
-import countShips from '../scripts/countShips';
+import countShips from '../functions/countShips';
 
 const shifts = [ // constraints of coordinates of first deck for all ship types
   [

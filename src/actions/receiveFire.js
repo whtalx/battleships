@@ -1,7 +1,7 @@
-import itSank from '../scripts/itSank';
-import getShip from '../scripts/getShip';
-import isThereShip from '../scripts/isThereShip';
-import shootAroundSankShip from '../scripts/shootAroundSankShip';
+import itSank from '../functions/itSank';
+import getShip from '../functions/getShip';
+import isThereShip from '../functions/isThereShip';
+import shootAroundSankShip from '../functions/shootAroundSankShip';
 
 export default (state, action) => {
   let feedback;

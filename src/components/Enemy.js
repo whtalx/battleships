@@ -11,12 +11,12 @@ const Enemy = (props) =>
           <Cell
             key={ id }
             id={ id }
-            last={ id === props.rtc.lastSent }
+            last={ id === props.peer.lastSent }
             ship={ ship }
             hit={ hit }
             miss={ miss }
             sank={ sank }
-            onClick={ () => { props.game.status === `play` && props.game.move && !props.rtc.waitingForFeedback && !hit && !miss && props.fire(id) }}
+            onClick={ () => { props.game.status === `play` && props.game.move && !props.peer.waitingForFeedback && !hit && !miss && props.fire(id) }}
             enemy
           />
         )
@@ -26,7 +26,7 @@ const Enemy = (props) =>
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  rtc: state.rtc,
+  peer: state.peer,
   sea: state.sea,
 });
 

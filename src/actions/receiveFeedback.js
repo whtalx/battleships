@@ -1,4 +1,4 @@
-import shootAroundSankShip from '../scripts/shootAroundSankShip';
+import shootAroundSankShip from '../functions/shootAroundSankShip';
 
 export default (state, action) => {
   const newState = { ...state };

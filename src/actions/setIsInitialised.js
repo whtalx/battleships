@@ -1,4 +1,4 @@
-export default (state, action) => ({
+export default (state) => ({
   ...state,
-  isInitialised: action.payload,
+  isInitialised: true,
 });

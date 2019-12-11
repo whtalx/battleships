@@ -1,10 +1,10 @@
-import getShip from '../scripts/getShip';
-import makeDeck from '../scripts/makeDeck';
-import removeDeck from '../scripts/removeDeck';
-import isThereShip from '../scripts/isThereShip';
-import getCoordinates from '../scripts/getCoordinates';
-import isThereShipInCross from '../scripts/isThereShipInCross';
-import isThereShipDiagonally from '../scripts/isThereShipDiagonally';
+import getShip from '../functions/getShip';
+import makeDeck from '../functions/makeDeck';
+import removeDeck from '../functions/removeDeck';
+import isThereShip from '../functions/isThereShip';
+import getCoordinates from '../functions/getCoordinates';
+import isThereShipInCross from '../functions/isThereShipInCross';
+import isThereShipDiagonally from '../functions/isThereShipDiagonally';
 
 export default (state, action) => {
   const newState = { ...state };

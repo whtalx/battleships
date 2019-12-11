@@ -1,22 +1,26 @@
 import send from '../actions/send';
-import setRTC from '../actions/setRTC';
 import receive from '../actions/receive';
-import setPeerID from '../actions/setPeerID';
+import setId from '../actions/setId';
+import setIsClient from '../actions/setIsClient';
+import setInterface from '../actions/setInterface';
 import clearMessage from '../actions/clearMessage';
 import setIsConnected from '../actions/setIsConnected';
 import setIsInitialised from '../actions/setIsInitialised';
 
 /**
- * peerID             -- id on Peer.js sercer
- * interface          -- Peer.js or AI
+ * id                 -- id on Peer.js
+ * message            -- message formed for sending
+ * interface          -- Person for pvp and Machine for comp
  * isClient           -- flag shows that current peer did not create session
- * isConnected        -- flag shows connecting to session status
- * isInitialised      -- flag shows that init function of current interface was called
- * waitingForFeedback -- flag prevent firing more than once (happens with slow network)
+ * isConnected        -- flag shows that both peers connected to session
+ * isInitialised      -- flag shows that current interface was successfully initialized
+ * waitingForFeedback -- flag prevents firing more than once at time (happens with slow network)
+ * lastSent           -- id of last sent cell (for highlighting in enemy sea)
+ * lastReceived       -- id of last received cell (for highlighting in ally sea)
  */
 
  const initialState = () => ({
-  peerID: ``,
+  id: ``,
   message: null,
   interface: null,
   isClient: false,
@@ -29,8 +33,8 @@ import setIsInitialised from '../actions/setIsInitialised';
 
 export default (state = initialState(), action) => {
   switch (action.type) {
-    case `SET_RTC`:
-      return setRTC(state, action);
+    case `SET_INTERFACE`:
+      return setInterface(state, action);
 
     case `SEND`:
       return send(state, action);
@@ -47,14 +51,17 @@ export default (state = initialState(), action) => {
     case `RECEIVE`:
       return receive(state, action);
 
-    case `SET_PEER_ID`:
-      return setPeerID(state, action);
+    case `SET_ID`:
+      return setId(state, action);
+
+    case `SET_IS_CLIENT`:
+      return setIsClient(state);
 
     case `SET_IS_CONNECTED`:
-      return setIsConnected(state, action);
+      return setIsConnected(state);
 
     case `SET_IS_INITIALISED`:
-      return setIsInitialised(state, action);
+      return setIsInitialised(state);
 
     case `RESET`:
       return initialState();

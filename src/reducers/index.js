@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import game from './game';
-import rtc from './rtc';
+import peer from './peer';
 import sea from './sea';
 
 const reducers = combineReducers({
   game,
-  rtc,
+  peer,
   sea,
 });
 

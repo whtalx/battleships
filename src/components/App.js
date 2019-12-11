@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import AI from '../scripts/AI';
+import Machine from '../classes/Machine';
 import Game from './Game';
 
 const App = (props) => {
@@ -47,26 +47,20 @@ const App = (props) => {
         }
 
         case `connect`: {
-          if (props.rtc.isConnected) {
-            props.setMove(props.rtc.isClient);
+          if (props.peer.isConnected) {
+            props.setMove(props.peer.isClient);
             props.changeStatus(`place`);
           }
           break;
         }
 
         case `place`: {
-          if (props.game.type === `comp`) {
-            if (props.rtc.interface === null) {
-              props.setRTC({
-                interface: new AI({
-                  setIsConnected: props.setIsConnected,
-                  receive: props.receive,
-                })
-              });
-            } else if (!props.rtc.isConnected) {
-              props.rtc.interface.init();
-            }
-          }
+          props.game.type === `comp` && props.peer.interface === null && props.setInterface(
+            new Machine({
+              connect: props.connect,
+              post: props.post,
+            })
+          );
 
           props.sea.shipsToPlace === 0 && props.changeStatus(`confirm`);
           document.addEventListener(`keypress`, handleKeyPress);
@@ -111,8 +105,8 @@ const App = (props) => {
         default: break;
       }
 
-      if (props.rtc.message) {
-        props.rtc.interface.send(props.rtc.message);
+      if (props.peer.message) {
+        props.peer.interface.send(props.peer.message);
         props.clearMessage();
       } else if (props.sea.feedback) {
         props.send(props.sea.feedback);
@@ -128,19 +122,19 @@ const App = (props) => {
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  rtc: state.rtc,
+  peer: state.peer,
   sea: state.sea,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   changeStatus: (status) => dispatch({ type: `CHANGE_STATUS`, payload: status }),
-  setIsConnected: (payload) => dispatch({ type: 'SET_IS_CONNECTED', payload }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
+  setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
   setMove: (payload) => dispatch({ type: `SET_MOVE`, payload }),
-  receive: (payload) => dispatch({ type: `RECEIVE`, payload }),
-  setRTC: (payload) => dispatch({ type: `SET_RTC`, payload }),
+  post: (payload) => dispatch({ type: `RECEIVE`, payload }),
   clearMessage: () => dispatch({ type: `CLEAR_MESSAGE` }),
   send: (payload) => dispatch({ type: `SEND`, payload }),
+  connect: () => dispatch({ type: 'SET_IS_CONNECTED' }),
   newRound: () => dispatch({ type: `NEW_ROUND` }),
   random: () => dispatch({ type: `RANDOM` }),
   repeat: () => dispatch({ type: `REPEAT` }),

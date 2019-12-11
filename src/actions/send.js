@@ -1,4 +1,4 @@
-import getCoordinates from '../scripts/getCoordinates';
+import getCoordinates from '../functions/getCoordinates';
 
 export default (state, action) => {
   const message = action.payload.type === `fire`

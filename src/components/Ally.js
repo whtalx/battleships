@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Sea from './Sea';
 import Cell from './Cell';
-import isShipPlaced from '../scripts/isShipPlaced';
+import isShipPlaced from '../functions/isShipPlaced';
 
 const Ally = (props) =>
   <Sea move={ props.game.status === `place` || props.game.status === `confirm` || !props.game.move }>
@@ -12,7 +12,7 @@ const Ally = (props) =>
           <Cell
             key={ id }
             id={ id }
-            last={ id === props.rtc.lastReceived }
+            last={ id === props.peer.lastReceived }
             ship={ ship }
             hit={ hit }
             miss={ miss }
@@ -27,7 +27,7 @@ const Ally = (props) =>
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  rtc: state.rtc,
+  peer: state.peer,
   sea: state.sea,
 });
 
