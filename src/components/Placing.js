@@ -5,7 +5,7 @@ import Button from './Button';
 
 const Wrapper = styled.div`
   padding: 8px 4px;
-  margin: 0 16px 16px 0;
+  margin: 8px 24px 24px 8px;
   width: calc(50vmin - 36px);
   height: calc(50vmin - 36px);
   min-width: 276px;
