@@ -1,50 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 import Person from '../classes/Person';
-import Input from './Input';
+import teal from '../themes/teal'
+import Window from './Window';
+import Content from './Content';
 import Button from './Button';
-
-const Wrapper = styled.div`
-  margin: 16px 0;
-  padding: 8px 4px;
-  width: 320px;
-  max-width: 80%;
-  position: relative;
-  background-color: var(--teal);
-  box-shadow: 16px 16px 0 var(--black);
-  color: var(--black);
-
-  :before {
-    content: '${ props => props.title_ }';
-    padding: 0 8px;
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    width: max-content;
-    height: 16px;
-    background-color: inherit;
-    color: inherit;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
-`;
-
-const Content = styled.div`
-  padding: 32px 0;
-  height: 100%;
-  box-sizing: border-box;
-  min-height: 294px;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px double var(--black);
-`;
-
-const Buttons = styled.div`
-  margin-top: 32px;
-`;
+import Input from './Input';
+import Buttons from './Buttons';
+import Text from './Text';
 
 const Select = (props) => {
   const [peerId, setPeerId] = useState(``);
@@ -62,7 +25,7 @@ const Select = (props) => {
 
   const back = () => {
     setPeerId(``);
-    props.handleDisconnect();
+    props.disconnect();
   };
 
   useEffect(
@@ -83,44 +46,48 @@ const Select = (props) => {
     [props]
   );
 
-  switch (props.game.status) {
-    case `choose`:
-      return (
-        <Wrapper title_={ `select game type` }>
-          <Content>
-            <p>you want to play with</p>
-            <Buttons>
-              <Button autoFocus onClick={ () => { props.selectType(true) }} text={ `person` } index={ 0 } />
-              <Button onClick={ () => { props.selectType(false) }} text={ `computer` } index={ 0 } />
-            </Buttons>
-          </Content>
-        </Wrapper>
-      );
+  const titles = {
+    choose: `select game type`,
+    connect: `connect to remote player`,
+  };
 
-    case `connect`:
-      return props.peer.id === ``
-        ? (
-          <Wrapper title_={ `connect to remote player` }>
-            <Content>please wait</Content>
-          </Wrapper>
-        )
-        : (
-          <Wrapper title_={ `connect to remote player` }>
-            <Content>
-              <label>share this code<br />with someone<br />you want to play:</label>
-              <Input symbols={ props.peer.id.length } value={ props.peer.id } readonly />
-              <label>or paste code that<br />was shared to you:</label>
-              <Input onInput={ handleInput } submit={ join } symbols={ peerId.length } />
-              <Buttons>
-                <Button onClick={ join } text={ `connect` } />
-                <Button onClick={ back } text={ `back` } />
-              </Buttons>
-            </Content>
-          </Wrapper>
-        );
+  const getContent = () => {
+    switch (props.game.status) {
+      case `choose`:
+        return [
+          <Text key={ `text` }>you want to play with</Text>,
+          <Buttons key={ `buttons` }>
+            <Button autoFocus onClick={() => { props.selectType(true) }} text={ `person` } index={ 0 }/>
+            <Button onClick={() => { props.selectType(false) }} text={ `computer` } index={ 0 }/>
+          </Buttons>
+        ];
 
-    default: return null;
-  }
+      case `connect`:
+        return props.peer.id === ``
+          ? `please wait`
+          : [
+            <Text key={ `text-input` }>share this code with someone you want to play:</Text>,
+            <Input key={ `output` } symbols={ props.peer.id.length } value={ props.peer.id } readonly/>,
+            <Text key={ `text-output` }>or paste code that was shared to you:</Text>,
+            <Input key={ `input` } onInput={ handleInput } submit={ join } symbols={ peerId.length }/>,
+            <Buttons key={ `buttons` }>
+              <Button onClick={ join } text={ `connect` }/>
+              <Button onClick={ back } text={ `back` }/>
+            </Buttons>,
+          ];
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Window title={ titles[props.game.status] } theme={ teal }>
+      <Content>
+        { getContent() }
+      </Content>
+    </Window>
+  );
 };
 
 const mapStateToProps = (state) => ({
@@ -131,9 +98,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   disconnect: () => dispatch({ type: `RESET` }),
   client: () => dispatch({ type: `SET_IS_CLIENT` }),
+  open: () => dispatch({ type: 'SET_IS_CONNECTED' }),
   setId: (payload) => dispatch({ type: `SET_ID`, payload }),
   data: (payload) => dispatch({ type: `RECEIVE`, payload }),
-  open: () => dispatch({ type: 'SET_IS_CONNECTED' }),
   initialised: () => dispatch({ type: `SET_IS_INITIALISED` }),
   setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),

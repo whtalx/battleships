@@ -1,70 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 import Button from './Button';
-
-const Window = styled.div`
-  margin: 8px;
-  width: calc(50vmin - 20px);
-  height: calc(50vmin - 20px);
-  min-width: 292px;
-  min-height: 292px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Wrapper = styled.div`
-  padding: 8px 4px;
-  margin: -16px 0 0 -16px;
-  width: 270px;
-  height: 270px;
-  box-sizing: border-box;
-  position: relative;
-  background-color: var(--teal);
-  box-shadow: 16px 16px 0 var(--black);
-  color: var(--black);
-
-  :before {
-    content: '${ props => props.title_ }';
-    padding: 0 8px;
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    width: max-content;
-    height: 16px;
-    background-color: inherit;
-    color: inherit;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
-`;
-
-const Content = styled.div`
-  padding: 16px 0;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: space-between;
-  border: 3px double var(--black);
-`;
-
-const Text = styled.div`
-  margin-top: 4em;
-  width: 100%;
-  line-height: 2.5em;
-  text-align: center;
-`;
-
-const Buttons = styled.div`
-`;
+import Window from './Window';
+import Content from './Content';
+import ShipsLeft from './ShipsLeft';
+import gray from '../themes/gray';
+import teal from '../themes/teal';
+import Buttons from './Buttons';
+import Text from './Text';
 
 const Modal = (props) => {
-  const resultText = {
+  const title = {
     victory: `you win!`,
     defeat: `you loose!`,
+    wait: `please wait`,
+    place: `place your ships`,
+    confirm: `place your ships`,
   };
 
   switch (props.game.status) {
@@ -72,43 +23,47 @@ const Modal = (props) => {
     case `victory`:
       return props.game.isAllyWantRepeat
         ? (
-          <Window>
-            <Wrapper title_={ resultText[props.game.status] }>
-              <Content>
-                <Text>
-                  please wait for your opponent to answer
-                </Text>
-              </Content>
-            </Wrapper>
+          <Window theme={ gray } title={ title[props.game.status] }>
+            <Content>
+              <p>please wait for your<br />opponent to answer</p>
+            </Content>
           </Window>
         )
         : (
-          <Window>
-            <Wrapper title_={ resultText[props.game.status] }>
-              <Content>
-                <Text>
-                  { !props.game.isAllyWantRepeat && `play another round?` }<br />
-                  { props.game.type === `pvp` && props.game.isEnemyWantRepeat && `your opponent insist` }
-                </Text>
-                <Buttons>
-                  <Button text={ `yes` } index={ 0 } onClick={ props.repeat } autoFocus />
-                  <Button text={ `no` } index={ 0 } onClick={ props.reset } />
-                </Buttons>
-              </Content>
-            </Wrapper>
+          <Window theme={ gray } title={ title[props.game.status] }>
+            <Content>
+              <Text>play another round?</Text>
+              <Text>{ props.game.type === `pvp` && props.game.isEnemyWantRepeat && `your opponent insist` }</Text>
+              <Buttons>
+                <Button text={ `yes` } index={ 0 } onClick={ props.repeat } autoFocus />
+                <Button text={ `no` } index={ 0 } onClick={ props.reset } />
+              </Buttons>
+            </Content>
           </Window>
         );
 
     case `wait`:
       return (
-        <Window>
-          <Wrapper title_={ `please wait` }>
-            <Content>
-              <Text>
-                your opponent<br/>placing their ships
-              </Text>
-            </Content>
-          </Wrapper>
+        <Window theme={ gray } title={ title[props.game.status] }>
+          <Content>
+            <p>your opponent<br />placing their ships</p>
+          </Content>
+        </Window>
+      );
+
+    case `place`:
+    case `confirm`:
+      return (
+        <Window theme={ teal } title={ title[props.game.status] }>
+          <Content>
+            <Text>click on field to place<br />or delete ship deck</Text>
+            <Text>ships left:</Text>
+            <ShipsLeft />
+            <Buttons>
+              <Button text={ `random` } index={ 0 } onClick={ props.random } autoFocus />
+              <Button text={ `confirm` } index={ 0 } onClick={ props.game.status === `confirm` && props.ready } />
+            </Buttons>
+          </Content>
         </Window>
       );
 
@@ -123,7 +78,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   repeat: () => dispatch({ type: `REPEAT` }),
+  random: () => dispatch({ type: `RANDOM` }),
   reset: () => dispatch({ type: `RESET` }),
+  ready: () => dispatch({ type: `READY` }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Modal);

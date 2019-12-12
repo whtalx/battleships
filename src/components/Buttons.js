@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 
 export default styled.div`
+  margin-bottom: 8px;
+  width: 100%;
+  flex: 1 0 100%;
+  align-self: flex-end;
   display: flex;
-  flex-flow: row wrap;
-  align-items: center;
   justify-content: center;
-
-  & > div:nth-child(2) {
-    z-index: 1;
-  }
 `;

@@ -1,13 +1,16 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-const Cell = styled.div`
+export default styled.div`
+  width: calc(5vmin);
+  height: calc(5vmin);
+  min-width: 26px;
+  min-height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background-color: var(--blue);
-  color: ${ props => props.last ? css`var(--aqua)` : css`var(--gray)` };
+  background-color: var(--navy);
 
   ${
     props => props.ship && css`
@@ -27,7 +30,20 @@ const Cell = styled.div`
       }
     `
   }
-`;
 
-export default (props) =>
-  <Cell {...props}>{ props.miss && `*` }</Cell>
+  ${
+    props => props.miss && css`
+      :after {
+        content: '';
+        width: 10%;
+        height: 10%;
+        border-radius: 50%;
+        background-color: ${
+          props.last
+            ? css`var(--aqua)`
+            : css`var(--gray)`
+        };
+      }
+    `
+  }
+`;

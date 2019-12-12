@@ -2,34 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Ally from './Ally';
 import Enemy from './Enemy';
-import Ocean from './Ocean';
 import Select from './Select';
-import Placing from './Placing';
 import Modal from './Modal';
+import Ocean from './Ocean';
 
-const Game = (props) => {
-  switch (props.status) {
+const Game = ({ status }) => {
+  switch (status) {
     case `choose`:
     case `connect`:
       return <Select />;
-
-    case `place`:
-    case `confirm`:
-      return (
-        <Ocean>
-          <Ally />
-          <Placing />
-        </Ocean>
-      );
-
-    case `victory`:
-    case `wait`:
-      return (
-        <Ocean>
-          <Ally />
-          <Modal />
-        </Ocean>
-      );
 
     case `play`:
       return (
@@ -48,7 +29,12 @@ const Game = (props) => {
       );
 
     default:
-      return null;
+      return (
+        <Ocean>
+          <Ally />
+          <Modal />
+        </Ocean>
+      );
   }
 };
 

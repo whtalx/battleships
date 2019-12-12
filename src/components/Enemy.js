@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Sea from './Sea';
 import Cell from './Cell';
+import Grid from './Grid';
+import Window from './Window';
+import active from '../themes/active';
+import inactive from '../themes/inactive';
 
 const Enemy = (props) =>
-  <Sea move={ props.game.move }>
+  <Window theme={ props.game.move ? active : inactive }>
+    <Grid>
     {
       props.sea.enemy.map(row =>
         row.map(({ id, ship, hit, miss, sank }) =>
@@ -22,7 +26,8 @@ const Enemy = (props) =>
         )
       )
     }
-  </Sea>;
+    </Grid>
+  </Window>;
 
 const mapStateToProps = (state) => ({
   game: state.game,

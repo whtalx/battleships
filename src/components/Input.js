@@ -49,7 +49,6 @@ const Background = styled.div`
 `;
 
 const Wrapper = styled.div`
-  margin: 16px auto;
   display: flex;
   flex-flow: row;
   justify-content: center;
