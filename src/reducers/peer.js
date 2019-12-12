@@ -1,6 +1,7 @@
 import send from '../actions/send';
-import receive from '../actions/receive';
 import setId from '../actions/setId';
+import newRound from '../actions/newRound';
+import receive from '../actions/receive';
 import setIsClient from '../actions/setIsClient';
 import setInterface from '../actions/setInterface';
 import clearMessage from '../actions/clearMessage';
@@ -65,6 +66,9 @@ export default (state = initialState(), action) => {
 
     case `RESET`:
       return initialState();
+
+    case `NEW_ROUND`:
+      return newRound(state);
 
     default: return state;
   }

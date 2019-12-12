@@ -45,7 +45,7 @@ export default class Machine {
     this.init();
   }
 
-  init = (newGame = true) => {
+  init = (newGame = true, firstShoot = false) => {
     this.state = 0;
     this.shootLog = [];
     this.lastShoot = null;
@@ -53,6 +53,7 @@ export default class Machine {
     this.directionsStack = null;
     this.sea = randomPlacing(initialState());
     this.fireDelay = 250; // ::ms
+    this.firstShoot = firstShoot;
     newGame && this.connect();
   };
 
@@ -281,18 +282,19 @@ export default class Machine {
         this.sea = sendVictory(this.sea);
         this.post(this.sea.feedback);
         this.post({ type: `repeat` });
-        this.init(false);
+        this.init(false, !this.firstShoot);
         break;
       }
 
       case `ready`: {
         this.post({ type: `ready` });
+        this.firstShoot && this.shoot();
         break;
       }
 
       case `victory`: {
         this.post({ type: `repeat` });
-        this.init(false);
+        this.init(false, !this.firstShoot);
         break;
       }
 

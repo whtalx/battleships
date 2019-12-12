@@ -2,6 +2,7 @@ import ready from '../actions/ready';
 import repeat from '../actions/repeat';
 import setMove from '../actions/setMove';
 import selectType from '../actions/selectType';
+import setFirstMove from '../actions/setFirstMove';
 import changeStatus from '../actions/changeStatus';
 import receiveReady from '../actions/receiveReady';
 import receiveRepeat from '../actions/receiveRepeat';
@@ -26,10 +27,11 @@ import receiveRepeat from '../actions/receiveRepeat';
  * isAllyWantRepeat  -- flag shows that you agreed on another round
  * isEnemyWantRepeat -- flag shows that your opponent agreed on another round
  *
- * move -- flag shows if it's your turn to fire
- * in comp mode your it's turn at every round start
- * in pvp mode it's changing alternately with every new round
- * and in first round client peer fires first
+ * move      -- flag shows if it's your turn to fire
+ * firstMove -- flag shows that it's turn at next round start
+ *   it's changing alternately with every new round
+ *   in pvp mode client peer starts first round
+ *   in comp mode player starts first round
  */
 
 const initialState = (status = `choose`, move = false) => ({
@@ -38,6 +40,7 @@ const initialState = (status = `choose`, move = false) => ({
   isEnemyReady: false,
   isAllyWantRepeat: false,
   isEnemyWantRepeat: false,
+  firstMove: move,
   status,
   move,
 });
@@ -92,16 +95,14 @@ export default (state = initialState(), action) => {
       }
     }
 
-    case `SET_MOVE`:
-      return action.payload
-        ? setMove(state)
-        : state;
+    case `SET_FIRST_MOVE`:
+      return setFirstMove(state, action);
 
     case `RESET`:
       return initialState();
 
     case `NEW_ROUND`:
-      return initialState(`place`, state.type === 'pvp' ? !state.move : true);
+      return initialState(`place`, state.firstMove);
 
     default:
       return state;

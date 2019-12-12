@@ -48,7 +48,7 @@ const App = (props) => {
 
         case `connect`: {
           if (props.peer.isConnected) {
-            props.setMove(props.peer.isClient);
+            props.setFirstMove(props.peer.isClient);
             props.changeStatus(`place`);
           }
           break;
@@ -130,7 +130,7 @@ const mapDispatchToProps = (dispatch) => ({
   changeStatus: (status) => dispatch({ type: `CHANGE_STATUS`, payload: status }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
   setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
-  setMove: (payload) => dispatch({ type: `SET_MOVE`, payload }),
+  setFirstMove: (payload) => dispatch({ type: `SET_FIRST_MOVE`, payload }),
   post: (payload) => dispatch({ type: `RECEIVE`, payload }),
   clearMessage: () => dispatch({ type: `CLEAR_MESSAGE` }),
   send: (payload) => dispatch({ type: `SEND`, payload }),
