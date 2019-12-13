@@ -13,9 +13,9 @@ const Window = styled.div`
   box-shadow: ${ props => props.modal ? `none` : `16px 16px var(--black)` };
 
   ${
-    props => props.title && css`
+    props => props.title_ && css`
       :before {
-        content: '${ props.title }';
+        content: '${ props.title_ }';
         padding: 0 8px;
         position: absolute;
         top: -6px;
@@ -32,7 +32,7 @@ const Window = styled.div`
 
 export default ({ theme, title, modal, children }) =>
   <ThemeProvider theme={ theme }>
-    <Window title={ title } modal={ modal }>
+    <Window title_={ title } modal={ modal }>
         { children }
     </Window>
   </ThemeProvider>;
