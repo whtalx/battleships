@@ -3,38 +3,35 @@
  * return: sea with all cells around ship setting miss parameter
  */
 
-export default (sea, ship) => {
-  const newSea = [...sea];
-  const newShip = [...ship];
+export default ({ ally, enemy, data }) => {
+  const sea = ally || enemy;
+  const ship = data;
 
-  const [xsLength, ysLength] = newShip.length === 1        // lengths of arrays of cells around ship
-    ? [3, 3]                                              // for single decker (1x1) it's 3x3
-    : newShip[1][1] - newShip[0][1] === 0
-      ? [newShip.length + 2, 3]                           // ship length + 2 cells around
-      : [3, newShip.length + 2];
+  const [xs, ys] = ship.length === 1                // lengths of arrays of cells around ship
+    ? [3, 3]                                        // for single decker it's 3x3
+    : ship[1][1] - ship[0][1] === 0                 // check ship direction. 0 -- horizontal, ±1 -- vertical
+      ? [ship.length + 2, 3]                        // ship length +2 cells around
+      : [3, ship.length + 2];
 
-  const condition = (x, y) =>                             // returns false if ship has cell with x and y coordinates
-    newShip.length === 1
+  const condition = (x, y) =>                       // returns false if ship has cell with x and y coordinates
+    ship.length === 1
       ? !(x === 1 && y === 1)
-      : newShip[1][1] - newShip[0][1] === 0
-        ? !(x > 0 && x < newShip.length + 1 && y === 1)
-        : !(y > 0 && y < newShip.length + 1 && x === 1);
+      : ship[1][1] - ship[0][1] === 0
+        ? !(x > 0 && x < ship.length + 1 && y === 1)
+        : !(y > 0 && y < ship.length + 1 && x === 1);
 
   const shoot = (x, y) => {
-    const head = newShip[0];                               // first deck of ship (leftmost or topmost)
-    if (
-      newSea[y - 1 + head[1]] &&                           // -1 because 0 would hit ship cell, and we need cell before
-      newSea[y - 1 + head[1]][x - 1 + head[0]]
-    ) {
-      newSea[y - 1 + head[1]][x - 1 + head[0]].miss = true;
-    }
+    const [x0, y0] = ship[0];                        // coordinates of first deck of the ship (leftmost or topmost)
+    sea[y + y0 - 1] &&                               // -1 because 0 would hit first deck cell, and we need cell before
+    sea[y + y0 - 1][x + x0 - 1] &&
+    (sea[y + y0 - 1][x + x0 - 1].miss = true);
   };
 
-  [...Array(ysLength).keys()].forEach(y => {
-    [...Array(xsLength).keys()].forEach(x => {
-      condition(x, y) && shoot(x, y);
-    });
-  });
+  [...Array(ys).keys()].forEach(y =>
+    [...Array(xs).keys()].forEach(x =>
+      condition(x, y) && shoot(x, y)
+    )
+  );
 
-  return newSea;
+  return sea;
 }

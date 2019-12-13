@@ -1,41 +1,53 @@
 import itSank from '../functions/itSank';
-import getShip from '../functions/getShip';
 import isThereShip from '../functions/isThereShip';
 import shootAroundSankShip from '../functions/shootAroundSankShip';
 
-export default (state, action) => {
+export default (state, { payload }) => {
+  let { ally, squadron, allyShipsLeft } = state;
+  const [x, y] = payload.data;
+  const thereIsShip = isThereShip(ally, [x, y]);
+  let data = [x, y];
   let feedback;
-  const data = [];
-  const newState = { ...state };
-  const coordinates = [...action.payload.data];
-  const thereIsShip = isThereShip(newState.ally, coordinates);
 
   if (thereIsShip) {
-    newState.ally[coordinates[1]][coordinates[0]].hit = true;
-    const [type, ship] = getShip(thereIsShip);
-    if (itSank(type, ship, newState)) {
-      newState.allyShipsLeft -= 1;
-      if (newState.allyShipsLeft === 0) {
-        newState.feedback = { type: `defeat` };
-        return newState;
+    ally[y][x].hit = true;
+    const [type, ship] = thereIsShip;
+    if (itSank(squadron[type][ship], ally)) {
+      allyShipsLeft -= 1;
+      if (allyShipsLeft === 0) {
+        return {
+          ...state,
+          ally,
+          squadron,
+          allyShipsLeft,
+          feedback: { type: `defeat` },
+        };
       }
 
-      newState.squadron[type][ship].forEach(item => {
-        newState.ally[item[1]][item[0]].sank = true;
-        data.push(item);
+      data = squadron[type][ship];
+      data.forEach(item => {
+        ally[item[1]][item[0]].sank = true;
       });
 
-      newState.ally = shootAroundSankShip(newState.ally, data);
+      ally = shootAroundSankShip({ ally, data });
       feedback = `sank`;
     } else {
       feedback = `hit`;
     }
   } else {
     feedback = `miss`;
-    newState.ally[coordinates[1]][coordinates[0]].miss = true;
+    ally[y][x].miss = true;
   }
 
-  data.length === 0 && data.push(coordinates);
-  newState.feedback = { type: `feedback`, data, feedback };
-  return newState;
+  return {
+    ...state,
+    ally,
+    squadron,
+    allyShipsLeft,
+    feedback: {
+      type: `feedback`,
+      data,
+      feedback,
+    },
+  };
 }

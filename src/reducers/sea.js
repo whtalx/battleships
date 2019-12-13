@@ -69,6 +69,9 @@ export default (state = initialState(), action) => {
         case `defeat`:
           return sendVictory(state, action);
 
+        case `disconnect`:
+          return initialState();
+
         default:
           return state;
       }

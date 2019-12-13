@@ -15,38 +15,45 @@ const Space = styled.div`
   height: 0;
 `;
 
-const ShipsLeft = (props) => {
+const ShipsLeft = ({ sea }) => {
   const isPlaced = ({ type, ship, deck }) =>
-    props.sea.squadron[type][ship][deck] !== null;
+    sea.squadron[type][ship][deck] !== null;
 
-  const Deck = ({ type, ship, deck }) =>
+  const makeDeck = ({ type, ship, deck }) =>
     <Cell
+      key={ `${ type }-${ ship }-${ deck }` }
       last={
-        props.sea.deckToPlace.type === type &&
-        props.sea.deckToPlace.ship === ship &&
-        props.sea.deckToPlace.deck === deck
+        sea.deckToPlace.type === type &&
+        sea.deckToPlace.ship === ship &&
+        sea.deckToPlace.deck === deck
       }
       ship={ !isPlaced({ type, ship, deck }) }
       isCompleted
     />;
 
+  const emptyRow = ({ y }) =>
+    [...Array(8).keys()].map((x) => <Space key={ `${ x }-${ y }` } />);
+
   return (
     <Ships>
       {
         [...Array(7)].reduce(
-          (heap, _, y) => y % 2 !== 0
-            ? [...heap, ...[...Array(8).keys()].map((x) => <Space key={ `${ x }-${ y }` } />)]
-            : [...heap, ...props.sea.squadron[y / 2].reduce(
+          (grid, _, y) => y % 2 !== 0
+            ? [...grid, ...emptyRow({ y })]
+            : [...grid, ...sea.squadron[y / 2].reduce(
                 (row, ship, index) => {
+                  const typeIndex = y / 2;
+                  const shipIndex = sea.squadron[typeIndex].length - index - 1;
                   const i = index > 0
-                    ? props.sea.squadron[y / 2][index - 1].length * index + index
+                    ? sea.squadron[typeIndex][index - 1].length * index + index
                     : index;
                   for (let deck = 0; deck < ship.length; deck++) {
-                    row[deck + i] = <Deck key={ `${ y / 2 }-${ index }-${ deck }` } type={ y / 2 } ship={ props.sea.squadron[y / 2].length - index - 1 } deck={ ship.length - deck - 1 } />;
+                    const deckIndex = ship.length - deck - 1;
+                    row[deck + i] = makeDeck({ type: typeIndex, ship: shipIndex, deck: deckIndex });
                   }
                   return row
                 },
-              [...Array(8)].map((_, x) => <Space key={ `${ x }-${ y }` } />)
+              emptyRow({ y })
             )],
           [],
         )
@@ -55,14 +62,5 @@ const ShipsLeft = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  game: state.game,
-  sea: state.sea,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  ready: () => dispatch({ type: `READY` }),
-  random: () => dispatch({ type: `RANDOM` }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ShipsLeft);
+const mapStateToProps = ({ sea }) => ({ sea });
+export default connect(mapStateToProps)(ShipsLeft);

@@ -3,10 +3,8 @@ import game from './game';
 import peer from './peer';
 import sea from './sea';
 
-const reducers = combineReducers({
+export default combineReducers({
   game,
   peer,
   sea,
 });
-
-export default reducers;

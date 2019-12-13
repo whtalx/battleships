@@ -1,4 +1,4 @@
-export default (state, action) => ({
+export default (state, { payload }) => ({
   ...state,
-  id: action.payload,
+  id: payload,
 });

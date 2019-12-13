@@ -2,21 +2,18 @@ import React from 'react';
 import styled, { css, ThemeProvider } from 'styled-components';
 
 const Window = styled.div`
-  width: calc(50vmin + 19px);
-  height: calc(50vmin + 31px);
-  min-width: 279px;
-  min-height: 291px;
+  margin: 2px;
   box-sizing: border-box;
   position: relative;
   border-color: ${ props => props.theme.background };
   background-color: ${ props => props.theme.background };
   color: ${ props => props.theme.foreground };
   border-style: solid;
-  border-width: 8px 2px;
-  box-shadow: 16px 16px var(--black);
+  border-width: 8px 4px;
+  box-shadow: ${ props => props.modal ? `none` : `16px 16px var(--black)` };
 
   ${
-  props => props.title && css`
+    props => props.title && css`
       :before {
         content: '${ props.title }';
         padding: 0 8px;
@@ -30,12 +27,12 @@ const Window = styled.div`
         z-index: 1;
       }
     `
-}
+  }
 `;
 
-export default ({ theme, title, children }) =>
+export default ({ theme, title, modal, children }) =>
   <ThemeProvider theme={ theme }>
-    <Window title={ title }>
+    <Window title={ title } modal={ modal }>
         { children }
     </Window>
   </ThemeProvider>;

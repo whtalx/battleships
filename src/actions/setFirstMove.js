@@ -1,5 +1,5 @@
-export default (state, action) => ({
+export default (state, { payload }) => ({
   ...state,
-  move: action.payload,
-  firstMove: action.payload,
+  move: payload,
+  firstMove: payload,
 });

@@ -1,4 +1,4 @@
 export default (state) => ({
   ...state,
-  message: null,
+  message: { type: `disconnect` },
 });

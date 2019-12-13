@@ -3,8 +3,6 @@
  * output: [3, 4]
  */
 
-/**
- * choose less fucked up version:
-  */
-// export default (id) => id.split('-').reduce((a, i) => +i ? [ ...a, +i] : a, []);
-export default (id) => id.match(/\d+-/g).map(item => parseInt(item));
+export default (id) =>// choose less fucked up version:
+  id.match(/\d+-/g).map(item => parseInt(item));
+  // id.split('-').reduce((a, i) => +i ? [ ...a, +i] : a, []);

@@ -1,4 +1,3 @@
-import getShip from '../functions/getShip';
 import makeDeck from '../functions/makeDeck';
 import removeDeck from '../functions/removeDeck';
 import isThereShip from '../functions/isThereShip';
@@ -6,9 +5,9 @@ import getCoordinates from '../functions/getCoordinates';
 import isThereShipInCross from '../functions/isThereShipInCross';
 import isThereShipDiagonally from '../functions/isThereShipDiagonally';
 
-export default (state, action) => {
+export default (state, { payload }) => {
   const newState = { ...state };
-  const coordinates = getCoordinates(action.payload);
+  const coordinates = getCoordinates(payload);
 
   /**
    * removing decks from ship
@@ -16,11 +15,11 @@ export default (state, action) => {
   const thereIsShip = isThereShip(newState.ally, coordinates);
   if (thereIsShip) {
     /**
-     * removing possible only with ends of ships,
+     * removing possible only for first and last decks,
      * decks in the middle could not be deleted
      */
-    const [type, ship, deck] = getShip(thereIsShip);
-    return (deck === 0 || !newState.squadron[type][ship][deck + 1])
+    const [type, ship, deck] = thereIsShip;
+    return deck === 0 || !newState.squadron[type][ship][deck + 1]
       ? removeDeck(type, ship, deck, coordinates, newState)
       : newState;
   }
@@ -42,7 +41,7 @@ export default (state, action) => {
      * see if we can add deck with this cell coordinates
      * to this ship
      */
-    const [type, ship] = thereIsShipInCross[0].split(`-`).map(item => parseInt(item));
+    const [type, ship] = thereIsShipInCross[0];
     for (let newDeck = 1; newDeck < newState.squadron[type][ship].length; newDeck++) {
       if (newState.squadron[type][ship][newDeck] === null) {
         const toStart = (
@@ -61,8 +60,7 @@ export default (state, action) => {
    */
   for (let i = 0; i < newState.squadron[newState.deckToPlace.type].length; i++) {
     const ship = newState.squadron[newState.deckToPlace.type][i];
-    const shipIsFull = ship.filter(i => i).length === ship.length;
-    if (shipIsFull) continue;
+    if (ship.filter(i => i).length === ship.length) continue;
       /**
        * new deck must be first deck of ship,
        * adding decks handled previously with `thereIsShipInCross`.

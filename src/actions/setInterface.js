@@ -1,4 +1,4 @@
-export default (state, action) => ({
+export default (state, { payload }) => ({
   ...state,
-  interface: action.payload,
+  interface: payload,
 });

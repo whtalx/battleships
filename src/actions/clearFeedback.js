@@ -1,1 +1,4 @@
-export default (state) => ({ ...state, feedback: null });
+export default (state) => ({
+  ...state,
+  feedback: null,
+});

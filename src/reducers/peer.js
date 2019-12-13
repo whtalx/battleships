@@ -1,5 +1,6 @@
 import send from '../actions/send';
 import setId from '../actions/setId';
+import reset from '../actions/reset';
 import newRound from '../actions/newRound';
 import receive from '../actions/receive';
 import setIsClient from '../actions/setIsClient';
@@ -41,7 +42,9 @@ export default (state = initialState(), action) => {
       return send(state, action);
 
     case `CLEAR_MESSAGE`:
-      return clearMessage(state);
+      return state.message.type === `disconnect`
+        ? initialState()
+        : clearMessage(state);
 
     case `READY`:
       return send(state, { payload: { type: `ready` }});
@@ -50,7 +53,9 @@ export default (state = initialState(), action) => {
       return send(state, { payload: { type: `repeat` }});
 
     case `RECEIVE`:
-      return receive(state, action);
+      return action.payload.type === `disconnect`
+        ? initialState()
+        : receive(state, action);
 
     case `SET_ID`:
       return setId(state, action);
@@ -65,7 +70,7 @@ export default (state = initialState(), action) => {
       return setIsInitialised(state);
 
     case `RESET`:
-      return initialState();
+      return reset(state);
 
     case `NEW_ROUND`:
       return newRound(state);

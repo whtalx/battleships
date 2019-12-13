@@ -1,4 +1,4 @@
 export default {
-  background: `var(--gray)`,
+  background: `var(--navy)`,
   foreground: `var(--white)`,
 };

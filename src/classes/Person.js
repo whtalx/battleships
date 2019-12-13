@@ -16,6 +16,7 @@ export default class Person {
   }
 
   close = () => {
+    this.connection && this.connection.close();
     this.connection = null;
     this.disconnect();
   };

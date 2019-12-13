@@ -1,39 +1,19 @@
+import isThereShip from './isThereShip';
+
 /**
  * input: coordinates of `a` cell
- * return: first not-false ship parameter of any `b` cell
- * (going clockwise, starting with left-top)
+ * return: true if `ship` parameter of any `b` cell is not false/null/undefined
  *
  * ____________
  * |_b_|___|_b_|
  * |___|_a_|___|
  * |_b_|___|_b_|
- *
  */
 
-export default (sea, coordinates) => (
-  (
-    sea[coordinates[1] - 1] && (
-      (
-        sea[coordinates[1] - 1][coordinates[0] - 1] &&
-        sea[coordinates[1] - 1][coordinates[0] - 1].ship
-      )
-      ||
-      (
-        sea[coordinates[1] - 1][coordinates[0] + 1] &&
-        sea[coordinates[1] - 1][coordinates[0] + 1].ship
-      )
-    )
-  ) || (
-    sea[coordinates[1] + 1] && (
-      (
-        sea[coordinates[1] + 1][coordinates[0] - 1] &&
-        sea[coordinates[1] + 1][coordinates[0] - 1].ship
-      )
-      ||
-      (
-        sea[coordinates[1] + 1][coordinates[0] + 1] &&
-        sea[coordinates[1] + 1][coordinates[0] + 1].ship
-      )
-    )
-  )
-);
+export default (sea, [x, y]) =>
+  [
+    isThereShip(sea, [x - 1, y - 1]),
+    isThereShip(sea, [x + 1, y - 1]),
+    isThereShip(sea, [x - 1, y + 1]),
+    isThereShip(sea, [x + 1, y + 1]),
+  ].filter(i => i).length > 0;

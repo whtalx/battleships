@@ -2,41 +2,41 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Cell from './Cell';
 import Grid from './Grid';
-import Window from './Window';
-import active from '../themes/active';
-import inactive from '../themes/inactive';
+import getCoordinates from '../functions/getCoordinates';
 
-const Enemy = (props) =>
-  <Window theme={ props.game.move ? active : inactive }>
-    <Grid>
+const Enemy = ({ game, peer, sea, fire }) =>
+  <Grid move={ game.move  }>
     {
-      props.sea.enemy.map(row =>
+      sea.enemy.map(row =>
         row.map(({ id, ship, hit, miss, sank }) =>
           <Cell
+            enemy
             key={ id }
             id={ id }
-            last={ id === props.peer.lastSent }
-            ship={ ship }
+            last={ id === peer.lastSent }
+            ship={ Boolean(ship) }
             hit={ hit }
             miss={ miss }
             sank={ sank }
-            onClick={ () => { props.game.status === `play` && props.game.move && !props.peer.waitingForFeedback && !hit && !miss && props.fire(id) }}
-            enemy
+            onClick={
+              () => {
+                game.status === `play` &&
+                game.move &&
+                !peer.waitingForFeedback &&
+                !hit &&
+                !miss &&
+                fire({ type: `fire`, data: getCoordinates(id) })
+              }
+            }
           />
         )
       )
     }
-    </Grid>
-  </Window>;
+  </Grid>;
 
-const mapStateToProps = (state) => ({
-  game: state.game,
-  peer: state.peer,
-  sea: state.sea,
-});
-
+const mapStateToProps = (props) => ({ ...props });
 const mapDispatchToProps = (dispatch) => ({
-  fire: (payload) => dispatch({ type: `SEND`, payload: { type: `fire`, data: payload }}),
+  fire: (payload) => dispatch({ type: `SEND`, payload }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Enemy);

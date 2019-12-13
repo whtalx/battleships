@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 
 export default styled.div`
+  margin: 2px;
   display: grid;
   grid-gap: 1px;
   grid-template: repeat(10, 1fr) / repeat(10, 1fr);
-  position: relative;
   background-color: var(--gray);
-  background-clip: content-box;
-  border: 3px double ${ props => props.theme.border };
+  border: 2px solid ${ props => props.move ? `var(--yellow)` : `var(--gray)` };
 `;

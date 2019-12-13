@@ -19,8 +19,7 @@ const shifts = [ // constraints of coordinates of first deck for all ship types
   ],
 ];
 
-const getRandomCoordinates = (state, type) => {
-  const newState = { ...state };
+const getRandomCoordinates = ({ ally, squadron, type }) => {
   /**
    * create random coordinates in constrained range;
    * check if there is ships diagonally or in cross
@@ -32,46 +31,44 @@ const getRandomCoordinates = (state, type) => {
    * output is coordinates of first deck and placing direction of other decks
    */
   const direction = Math.floor(Math.random() + .5); // 0 == horizontal, 1 == vertical
-  const coordinates = [
-    Math.floor(Math.random() * (10 + shifts[type][direction][0])),
-    Math.floor(Math.random() * (10 + shifts[type][direction][1])),
-  ];
+  const x = Math.floor(Math.random() * (10 + shifts[type][direction][0]));
+  const y = Math.floor(Math.random() * (10 + shifts[type][direction][1]));
 
   try {
-    for (let i = -1; i <= newState.squadron[type][0].length + 1; i++) {
+    for (let i = -1; i <= squadron[type][0].length + 1; i++) {
       if (
         (
           direction === 1 &&
-          newState.ally[coordinates[1] + i] && (
+          ally[y + i] && (
             (
-              newState.ally[coordinates[1] + i][coordinates[0] - 1] &&
-              newState.ally[coordinates[1] + i][coordinates[0] - 1].ship
+              ally[y + i][x - 1] &&
+              ally[y + i][x - 1].ship
             ) || (
-              newState.ally[coordinates[1] + i][coordinates[0]] &&
-              newState.ally[coordinates[1] + i][coordinates[0]].ship
+              ally[y + i][x] &&
+              ally[y + i][x].ship
             ) || (
-              newState.ally[coordinates[1] + i][coordinates[0] + 1] &&
-              newState.ally[coordinates[1] + i][coordinates[0] + 1].ship
+              ally[y + i][x + 1] &&
+              ally[y + i][x + 1].ship
             )
           )
         ) || (
           direction === 0 && (
             (
-              newState.ally[coordinates[1] - 1] &&
-              newState.ally[coordinates[1] - 1][coordinates[0] + i] &&
-              newState.ally[coordinates[1] - 1][coordinates[0] + i].ship
+              ally[y - 1] &&
+              ally[y - 1][x + i] &&
+              ally[y - 1][x + i].ship
             ) || (
-              newState.ally[coordinates[1]][coordinates[0] + i] &&
-              newState.ally[coordinates[1]][coordinates[0] + i].ship
+              ally[y][x + i] &&
+              ally[y][x + i].ship
             ) || (
-              newState.ally[coordinates[1] + 1] &&
-              newState.ally[coordinates[1] + 1][coordinates[0] + i] &&
-              newState.ally[coordinates[1] + 1][coordinates[0] + i].ship
+              ally[y + 1] &&
+              ally[y + 1][x + i] &&
+              ally[y + 1][x + i].ship
             )
           )
         )
       ) {
-        return getRandomCoordinates(newState, type);
+        return getRandomCoordinates({ ally, squadron, type });
       }
     }
   } catch ({ message }) {
@@ -79,26 +76,27 @@ const getRandomCoordinates = (state, type) => {
     return {};
   }
 
-  return { coordinates, direction };
+  return { coordinates: [x, y], direction };
 };
 
 export default (state) => {
-  const newState = { ...state };
+  const { ally, squadron } = state;
 
   try {
-      newState.squadron.forEach((_, type) => {
-        newState.squadron[type].forEach((_, ship) => {
-          const { coordinates, direction } = getRandomCoordinates(newState, type);
+      squadron.forEach((_, type) => {
+        squadron[type].forEach((_, ship) => {
+          const { coordinates, direction } = getRandomCoordinates({ ally, squadron, type });
           if (!coordinates) throw new Error(`Browser too weak for such recursion 😔`);
 
-          newState.squadron[type][ship] = newState.squadron[type][ship].map((_, index) =>
+          const [x, y] = coordinates;
+          squadron[type][ship] = squadron[type][ship].map((_, index) =>
             direction === 0
-              ? [coordinates[0] + index, coordinates[1]]
-              : [coordinates[0], coordinates[1] + index]
+              ? [x + index, y]
+              : [x, y + index]
           );
 
-          newState.squadron[type][ship].forEach((item, deck) => {
-            newState.ally[item[1]][item[0]].ship = `${ type }-${ ship }-${ deck }`;
+          squadron[type][ship].forEach((item, deck) => {
+            ally[item[1]][item[0]].ship = [type, ship, deck];
           });
         })
       });
@@ -106,5 +104,5 @@ export default (state) => {
     console.error(message);
   }
 
-  return countShips(newState);
+  return countShips({ ...state, ally, squadron });
 };

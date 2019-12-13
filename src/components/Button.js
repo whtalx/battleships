@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Button = styled.button`
   padding: 0 16px;
   height: 16px;
-  min-width: 60px;
+  min-width: 64px;
   background-color: var(--white);
   box-shadow: 8px 8px 0 var(--black);
   color: var(--gray);
@@ -23,19 +23,22 @@ const Button = styled.button`
   }
 `;
 
+const label = ({ index, text }) =>
+  index === undefined
+    ? text
+    : [
+      text.substring(0, index),
+      <span key={ text }>
+        { text[index] }
+      </span>,
+      text.substring(index + 1)
+    ];
+
 export default ({ autoFocus, className, onClick, text = ``, index }) =>
   <Button
     autoFocus={ autoFocus }
     className={ className }
     onClick={ typeof onClick === `function` ? onClick : undefined }
   >
-    {
-      index === undefined
-        ? text
-        : [
-          text.substring(0, index),
-          <span key={ text }>{ text[index] }</span>,
-          text.substring(index + 1)
-        ]
-    }
+    { label({ index, text }) }
   </Button>

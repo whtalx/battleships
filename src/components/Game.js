@@ -38,8 +38,5 @@ const Game = ({ status }) => {
   }
 };
 
-const mapStateToProps = (state) => ({
-  status: state.game.status,
-});
-
+const mapStateToProps = ({ game: { status }}) => ({ status });
 export default connect(mapStateToProps)(Game);

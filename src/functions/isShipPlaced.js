@@ -1,12 +1,13 @@
-import getShip from './getShip';
+/**
+ * input: `ship` parameter of cell (array [type, ship, deck])
+ * return: all decks of that ship are not null
+ */
 
-export default ({ cell, squadron }) => {
-  if (!cell) return false;
-
-  const [type, ship] = getShip(cell);
-
-  return squadron[type][ship].reduce(
-    (completed, deck) => completed ? deck !== null : false,
+export default ([type, ship], squadron) =>
+  squadron[type][ship].reduce(
+    (completed, deck) =>
+      completed
+        ? deck !== null
+        : false,
     true
   );
-};

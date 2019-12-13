@@ -28,8 +28,8 @@ import receiveRepeat from '../actions/receiveRepeat';
  * isEnemyWantRepeat -- flag shows that your opponent agreed on another round
  *
  * move      -- flag shows if it's your turn to fire
- * firstMove -- flag shows that it's turn at next round start
- *   it's changing alternately with every new round
+ * firstMove -- flag shows that it would be your turn at next round start
+ *   it's changing when round ends
  *   in pvp mode client peer starts first round
  *   in comp mode player starts first round
  */
@@ -89,6 +89,9 @@ export default (state = initialState(), action) => {
 
         case `victory`:
           return changeStatus(state, { payload: `defeat` });
+
+        case `disconnect`:
+          return initialState();
 
         default:
           return state;

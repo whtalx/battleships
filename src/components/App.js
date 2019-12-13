@@ -3,36 +3,54 @@ import { connect } from 'react-redux';
 import Machine from '../classes/Machine';
 import Game from './Game';
 
-const App = (props) => {
+const App = ({
+  game,
+  peer,
+  sea,
+  changeStatus,
+  selectType,
+  setFirstMove,
+  setInterface,
+  post,
+  clearMessage,
+  send,
+  connect,
+  newRound,
+  random,
+  repeat,
+  ready,
+  reset,
+}) => {
   const handleKeyPress = (event) => {
-    const key = event.key.toLowerCase();
-
-    switch (props.game.status) {
+    switch (game.status) {
       case `choose`: {
-        key === `p` && props.selectType(true);
-        key === `c` && props.selectType(false);
-        break;
+        const key = event.key.toLowerCase();
+        key === `p` && selectType(true);
+        key === `c` && selectType(false);
+        return;
       }
 
       case `place`: {
-        key === `r` && props.random();
-        break;
+        event.key.toLowerCase() === `r` && random();
+        return;
       }
 
       case `confirm`: {
-        key === `r` && props.random();
-        key === `c` && props.ready();
-        break;
+        const key = event.key.toLowerCase();
+        key === `r` && random();
+        key === `c` && ready();
+        return;
       }
 
       case `defeat`:
       case `victory`: {
-        key === `y` && props.repeat();
-        key === `n` && props.reset();
-        break;
+        const key = event.key.toLowerCase();
+        key === `y` && repeat();
+        key === `n` && reset();
+        return;
       }
 
-      default: break;
+      default: return;
     }
   };
 
@@ -40,41 +58,40 @@ const App = (props) => {
     () => {
       document.removeEventListener(`keypress`, handleKeyPress);
 
-      switch (props.game.status) {
+      switch (game.status) {
         case `choose`: {
           document.addEventListener(`keypress`, handleKeyPress);
           break;
         }
 
         case `connect`: {
-          if (props.peer.isConnected) {
-            props.setFirstMove(props.peer.isClient);
-            props.changeStatus(`place`);
+          if (peer.isConnected) {
+            setFirstMove(peer.isClient);
+            changeStatus(`place`);
           }
           break;
         }
 
         case `place`: {
-          props.game.type === `comp` && props.peer.interface === null && props.setInterface(
-            new Machine({
-              connect: props.connect,
-              post: props.post,
-            })
+          game.type === `comp` &&
+          peer.interface === null &&
+          setInterface(
+            new Machine({ connect, post })
           );
 
-          props.sea.shipsToPlace === 0 && props.changeStatus(`confirm`);
+          sea.shipsToPlace === 0 && changeStatus(`confirm`);
           document.addEventListener(`keypress`, handleKeyPress);
           break;
         }
 
         case `confirm`: {
-          if (props.sea.shipsToPlace !== 0) {
-            props.changeStatus(`place`);
+          if (sea.shipsToPlace !== 0) {
+            changeStatus(`place`);
             break;
           }
 
-          if (props.game.isAllyReady) {
-            props.changeStatus(props.game.isEnemyReady ? `play` : `wait`);
+          if (game.isAllyReady) {
+            changeStatus(game.isEnemyReady ? `play` : `wait`);
             break;
           }
 
@@ -83,7 +100,7 @@ const App = (props) => {
         }
 
         case `wait`: {
-          props.game.isEnemyReady && props.changeStatus(`play`);
+          game.isEnemyReady && changeStatus(`play`);
           break;
         }
 
@@ -93,8 +110,8 @@ const App = (props) => {
 
         case `defeat`:
         case `victory`: {
-          if (props.game.isAllyWantRepeat) {
-            props.game.isEnemyWantRepeat && props.newRound();
+          if (game.isAllyWantRepeat) {
+            game.isEnemyWantRepeat && newRound();
             break;
           }
 
@@ -105,32 +122,37 @@ const App = (props) => {
         default: break;
       }
 
-      if (props.peer.message) {
-        props.peer.interface.send(props.peer.message);
-        props.clearMessage();
-      } else if (props.sea.feedback) {
-        props.send(props.sea.feedback);
+      if (peer.message) {
+        peer.interface.send(peer.message);
+        clearMessage();
+      } else if (sea.feedback) {
+        send(sea.feedback);
       }
 
       return () => document.removeEventListener(`keypress`, handleKeyPress);
     },// eslint-disable-next-line
-    [props]
+    [
+      game.status,
+      game.isAllyReady,
+      game.isEnemyReady,
+      game.isAllyWantRepeat,
+      game.isEnemyWantRepeat,
+      peer.isConnected,
+      peer.message,
+      sea.feedback,
+      sea.shipsToPlace,
+    ]
   );
 
   return <Game />;
 };
 
-const mapStateToProps = (state) => ({
-  game: state.game,
-  peer: state.peer,
-  sea: state.sea,
-});
-
+const mapStateToProps = (props) => ({ ...props });
 const mapDispatchToProps = (dispatch) => ({
   changeStatus: (status) => dispatch({ type: `CHANGE_STATUS`, payload: status }),
   selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
-  setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
   setFirstMove: (payload) => dispatch({ type: `SET_FIRST_MOVE`, payload }),
+  setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
   post: (payload) => dispatch({ type: `RECEIVE`, payload }),
   clearMessage: () => dispatch({ type: `CLEAR_MESSAGE` }),
   send: (payload) => dispatch({ type: `SEND`, payload }),

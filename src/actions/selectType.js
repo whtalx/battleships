@@ -1,7 +1,7 @@
-export default (state, action) => ({
+export default (state, { payload }) => ({
   ...state,
-  status: action.payload ? `connect` : `place`,
-  type: action.payload ? `pvp` : `comp`,
-  move: action.payload ? state.move : true,
-  firstMove: action.payload ? state.firstMove : true,
+  status: payload ? `connect` : `place`,
+  type: payload ? `pvp` : `comp`,
+  move: payload ? state.move : true,
+  firstMove: payload ? state.firstMove : true,
 });

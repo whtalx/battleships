@@ -9,14 +9,26 @@ import Input from './Input';
 import Buttons from './Buttons';
 import Text from './Text';
 
-const Select = (props) => {
+const Select = ({
+  game,
+  peer,
+  disconnect,
+  client,
+  open,
+  setId,
+  data,
+  initialised,
+  setInterface,
+  computer,
+  person,
+}) => {
   const [peerId, setPeerId] = useState(``);
 
   const join = () => {
     peerId &&
     peerId !== `` &&
-    peerId !== props.peer.id &&
-    props.peer.interface.join(peerId);
+    peerId !== peer.id &&
+    peer.interface.join(peerId);
   };
 
   const handleInput = ({ target: { value }}) => {
@@ -25,25 +37,25 @@ const Select = (props) => {
 
   const back = () => {
     setPeerId(``);
-    props.disconnect();
+    disconnect();
   };
 
   useEffect(
     () => {
-      if (props.game.status !== `connect`) return;
+      if (game.status !== `connect` || peer.interface !== null) return;
 
-      props.peer.interface === null && props.setInterface(
+      setInterface(
         new Person({
-          disconnect: props.disconnect,
-          initialised: props.initialised,
-          client: props.client,
-          setId: props.setId,
-          open: props.open,
-          data: props.data,
+          disconnect,
+          initialised,
+          client,
+          setId,
+          open,
+          data,
         })
       );
-    },
-    [props]
+    },// eslint-disable-next-line
+    [game.status]
   );
 
   const titles = {
@@ -52,29 +64,33 @@ const Select = (props) => {
   };
 
   const getContent = () => {
-    switch (props.game.status) {
+    switch (game.status) {
       case `choose`:
-        return [
-          <Text key={ `text` }>you want to play with</Text>,
-          <Buttons key={ `buttons` }>
-            <Button autoFocus onClick={() => { props.selectType(true) }} text={ `person` } index={ 0 }/>
-            <Button onClick={() => { props.selectType(false) }} text={ `computer` } index={ 0 }/>
-          </Buttons>
-        ];
+        return (
+          <Content select>
+            <Text>you want to play with</Text>
+            <Buttons>
+              <Button autoFocus onClick={ person } text={ `person` } index={ 0 }/>
+              <Button onClick={ computer } text={ `computer` } index={ 0 }/>
+            </Buttons>
+          </Content>
+        );
 
       case `connect`:
-        return props.peer.id === ``
-          ? `please wait`
-          : [
-            <Text key={ `text-input` }>share this code with someone you want to play:</Text>,
-            <Input key={ `output` } symbols={ props.peer.id.length } value={ props.peer.id } readonly/>,
-            <Text key={ `text-output` }>or paste code that was shared to you:</Text>,
-            <Input key={ `input` } onInput={ handleInput } submit={ join } symbols={ peerId.length }/>,
-            <Buttons key={ `buttons` }>
-              <Button onClick={ join } text={ `connect` }/>
-              <Button onClick={ back } text={ `back` }/>
-            </Buttons>,
-          ];
+        return peer.id === ``
+          ? <Content select>please wait</Content>
+          : (
+            <Content select>
+              <Text>share this code with someone you want to play:</Text>
+              <Input symbols={ peer.id.length } value={ peer.id } readonly/>
+              <Text>or paste code that was shared to you:</Text>
+              <Input onInput={ handleInput } submit={ join } symbols={ peerId.length }/>
+              <Buttons>
+                <Button onClick={ join } text={ `connect` }/>
+                <Button onClick={ back } text={ `back` }/>
+              </Buttons>
+            </Content>
+          );
 
       default:
         return null;
@@ -82,19 +98,13 @@ const Select = (props) => {
   };
 
   return (
-    <Window title={ titles[props.game.status] } theme={ teal }>
-      <Content>
-        { getContent() }
-      </Content>
+    <Window title={ titles[game.status] } theme={ teal }>
+      { getContent() }
     </Window>
   );
 };
 
-const mapStateToProps = (state) => ({
-  game: state.game,
-  peer: state.peer,
-});
-
+const mapStateToProps = ({ game, peer }) => ({ game, peer });
 const mapDispatchToProps = (dispatch) => ({
   disconnect: () => dispatch({ type: `RESET` }),
   client: () => dispatch({ type: `SET_IS_CLIENT` }),
@@ -103,7 +113,8 @@ const mapDispatchToProps = (dispatch) => ({
   data: (payload) => dispatch({ type: `RECEIVE`, payload }),
   initialised: () => dispatch({ type: `SET_IS_INITIALISED` }),
   setInterface: (payload) => dispatch({ type: `SET_INTERFACE`, payload }),
-  selectType: (network) => dispatch({ type: `SELECT_TYPE`, payload: network }),
+  computer: () => dispatch({ type: `SELECT_TYPE`, payload: false }),
+  person: () => dispatch({ type: `SELECT_TYPE`, payload: true }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Select);

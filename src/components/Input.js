@@ -23,17 +23,19 @@ const Input = styled.input.attrs({
   caret-color: transparent;
 `;
 
-const Caret = styled.div`
+const Caret = styled.div.attrs({
+  children: `_`,
+})`
   position: absolute;
   top: 0;
-  right: ${ props => 147 - props.caret * 9 }px;
+  right: ${ props => 145 - props.caret * 9 }px;
   animation: ${ blink } 1s linear infinite;
 `;
 
 const Placeholder = styled.div`
   position: absolute;
   top: 0;
-  right: 3px;
+  right: 1px;
   z-index: 1;
 `;
 
@@ -74,7 +76,9 @@ export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
 
   const inputProps = readonly
     ? {
-      onChange: (event) => event.preventDefault(),
+      onChange: ({ preventDefault }) => {
+        preventDefault()
+      },
       value,
     }
     : {
@@ -90,9 +94,11 @@ export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
     <Wrapper>
       [
       <Background>
-        <Placeholder>{ `·`.repeat(17 - symbols) }</Placeholder>
+        <Placeholder>
+          { `·`.repeat(17 - symbols) }
+        </Placeholder>
         <Input ref={ input } { ...inputProps } />
-        { !readonly && <Caret caret={ caret }>_</Caret> }
+        { !readonly && <Caret caret={ caret } /> }
       </Background>
       ]
     </Wrapper>
