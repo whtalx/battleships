@@ -23,8 +23,10 @@ const Select = ({
   person,
 }) => {
   const [peerId, setPeerId] = useState(``);
+  const [error, setError] = useState(false);
 
   const join = () => {
+    !error &&
     peerId &&
     peerId !== `` &&
     peerId !== peer.id &&
@@ -32,6 +34,7 @@ const Select = ({
   };
 
   const handleInput = ({ target: { value }}) => {
+    setError(false);
     setPeerId(value);
   };
 
@@ -46,12 +49,13 @@ const Select = ({
 
       setInterface(
         new Person({
-          disconnect,
           initialised,
+          disconnect,
           client,
           setId,
           open,
           data,
+          error: () => setError(true),
         })
       );
     },// eslint-disable-next-line
@@ -82,9 +86,9 @@ const Select = ({
           : (
             <Content select>
               <Text>share this code with someone you want to play:</Text>
-              <Input symbols={ peer.id.length } value={ peer.id } readonly/>
+              <Input symbols={ peer.id.length } value={ peer.id } readonly />
               <Text>or paste code that was shared to you:</Text>
-              <Input onInput={ handleInput } submit={ join } symbols={ peerId.length }/>
+              <Input onInput={ handleInput } submit={ join } symbols={ peerId.length } error={ error } />
               <Buttons>
                 <Button onClick={ join } text={ `connect` }/>
                 <Button onClick={ back } text={ `back` }/>

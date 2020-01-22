@@ -6,6 +6,7 @@ export default class Person {
     this.initialised = props.initialised;
     this.client = props.client;
     this.setId = props.setId;
+    this.error = props.error;
     this.open = props.open;
     this.data = props.data;
     this.options = {
@@ -46,14 +47,8 @@ export default class Person {
       this.ready();
     });
 
-    this.peer.on('disconnected', () => {
-      this.peer.id = this.lastPeerID;
-      this.peer._lastServerID = this.lastPeerID;
-      this.peer.reconnect();
-    });
-
     this.peer.on('close', this.close);
-    this.peer.on('error', this.close);
+    this.peer.on('error', this.error);
   };
 
   join = (id) => {

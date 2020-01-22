@@ -21,6 +21,7 @@ const Input = styled.input.attrs({
   z-index: 1;
   background: none;
   caret-color: transparent;
+  color: ${ ({ error }) => error ? `var(--maroon)` : `inherit` };
 `;
 
 const Caret = styled.div.attrs({
@@ -56,7 +57,7 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
-export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
+export default ({ onInput, readonly = false, submit, symbols, value = ``, error }) => {
   const input = useRef(null);
   const [caret, setCaret] = useState(symbols);
   const moveCaret = (event) => {
@@ -77,7 +78,7 @@ export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
   const inputProps = readonly
     ? {
       onChange: ({ preventDefault }) => {
-        preventDefault()
+        preventDefault();
       },
       value,
     }
@@ -88,6 +89,7 @@ export default ({ onInput, readonly = false, submit, symbols, value = `` }) => {
       onChange: moveCaret,
       onKeyDown: moveCaret,
       onInput,
+      error,
     };
 
   return (
